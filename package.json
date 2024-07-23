@@ -1,0 +1,23 @@
+{
+  "name": "typescript",
+  "version": "1.0.0",
+  "main": "src/dist/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-packager . cool --platform=win32 --arch=x64",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "electron": "^31.2.1",
+    "electron-packager": "^17.1.2"
+  },
+  "dependencies": {
+    "robotjs": "^0.6.0",
+    "win-screen-resolution": "^3.0.2"
+  }
+}
