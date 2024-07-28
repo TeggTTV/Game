@@ -1,6 +1,15 @@
 "use strict";
-let width = window.innerWidth;
-let height = window.innerHeight;
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+let width = 1600;
+let height = 900;
 const mouse = {
     x: 0,
     y: 0,
@@ -13,37 +22,9 @@ if (tilesPerColumn % 2 !== 0)
     tilesPerColumn += 1;
 let tileWidth = width / tilesPerRow;
 let tileHeight = height / tilesPerColumn;
-const zonesVisible = true;
+const zonesVisible = false;
 const entities = [];
-let resolutions = [
-    { width: 1920, height: 1080 },
-    { width: 1680, height: 1050 },
-    { width: 1600, height: 1024 },
-    { width: 1600, height: 900 },
-    { width: 1440, height: 1080 },
-    { width: 1440, height: 900 },
-    { width: 1366, height: 768 },
-    { width: 1360, height: 768 },
-    { width: 1280, height: 1024 },
-    { width: 1280, height: 960 },
-    { width: 1280, height: 800 },
-    { width: 1280, height: 768 },
-    { width: 1280, height: 720 },
-    { width: 1176, height: 664 },
-    { width: 1152, height: 864 },
-    { width: 1024, height: 768 },
-    { width: 800, height: 600 },
-];
 function resize() {
-    res = { width: 0, height: 0 };
-    for (let r of resolutions) {
-        if (r.width < window.innerWidth && r.width > res.width)
-            res = r;
-    }
-    canvas.width = res.width;
-    canvas.height = res.height;
-    width = res.width;
-    height = res.height;
     tileWidth = width / tilesPerRow;
     tileHeight = height / tilesPerColumn;
 }
@@ -53,5 +34,12 @@ function resizeCamera(camera) {
 }
 function dist(x1, y1, x2, y2) {
     return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+}
+function wait(ms) {
+    return __awaiter(this, void 0, void 0, function* () {
+        return new Promise((resolve) => {
+            setTimeout(resolve, ms);
+        });
+    });
 }
 //# sourceMappingURL=global.js.map

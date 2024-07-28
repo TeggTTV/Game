@@ -30,6 +30,11 @@ class Main {
                 this.mainWindow = null;
             });
             resolutions = getAvailableResolution();
+            for (let res of resolutions) {
+                if (res.width / res.height !== 16 / 9) {
+                    resolutions.splice(resolutions.indexOf(res), 1);
+                }
+            }
             console.log(resolutions);
             ipc.on("getResolutions", (event) => {
                 event.sender.send("resolutions", resolutions);

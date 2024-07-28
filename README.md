@@ -5,20 +5,24 @@
 ![Build Status](https://travis-ci.org/joemccann/dillinger.svg?branch=master)
 
 ## ❌ TODO ✔️
-- ❌ Made Player class and implemented movement
-- ❌ Added Camera class and it follows the player
-- ❌ Added HoverHint class
-    - ❌ Multi-line support
-- ❌ Create an item class
-- ❌ Create an entity class (for all entities)
-    - ❌ Create a monster class
-    - ❌ Create an animal class
-    - ❌ Create an NPC class
-- ❌ Add array for all entities and render them
-- ❌ No more level editor, now using Tiled
-    - ❌ Made Zones for main grass and water
+- ✔️ Made Player class and implemented movement
+- ✔️ Added Camera class and it follows the player
+- ✔️ Added HoverHint class
+    - ✔️ Multi-line support
+- ✔️ Create an item class
+- ✔️ Create an entity class (for all entities)
+    - ✔️ Create a monster class
+    - ✔️ Create an animal class
+    - ✔️ Create an NPC class
+- ✔️ Add array for all entities and render them
+- ✔️ No more level editor, now using Tiled
+    - ✔️ Made Zones for main grass and water
     
-- ❌ Added a weapon class
+- ✔️ Added a weapon class   
+    - ✔️ Added a Gun class
+        - ✔️ Gun Shoots with GunOptions as options
+        - ✔️ GunOptions have a firerate, velocity, range, and accuracy.
+        - ✔️ Added Gun Recoil   
 - ❌ Add a map
 - ❌ Add a player inventory
 - ❌ Add a player health bar

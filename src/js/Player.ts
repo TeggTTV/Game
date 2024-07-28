@@ -10,24 +10,24 @@ class Player {
     maxSpeed: number;
 
     vel: {
-        x: number,
-        y: number,
+        x: number;
+        y: number;
     };
 
     acceleration: {
-        x: number,
-        y: number,
+        x: number;
+        y: number;
     };
 
     items: Item[];
-    holding: Item | undefined;
+    holding: Item | Gun | undefined;
 
     tilePlacement: TilePlacement;
     placingTile: boolean;
     constructor(x: number, y: number) {
         this.x = x;
         this.y = y;
-        
+
         this.width = tileWidth;
         this.height = tileHeight;
         // this.locationPerecentX = this.x / width;
@@ -44,8 +44,8 @@ class Player {
         };
 
         this.acceleration = {
-            x: 10,
-            y: 10,
+            x: height * 0.05,
+            y: height * 0.05,
         };
 
         this.items = [];
@@ -58,19 +58,25 @@ class Player {
         await this.imgLoader.loadImage("Player", "assets/images/red.png");
         // this.img = this.imgLoader.getImage("Player");
     }
+    equip(item: Item) {
+        this.items.push(item);
+    }
     draw() {
         // ctx.drawImage(this.img, this.x, this.y, tileWidth, tileHeight);
         ctx.fillRect(this.x, this.y, tileWidth, tileHeight);
+        if(this.holding instanceof Gun) {
+            this.holding.draw();
+        }
     }
     update(deltaTime: number) {
         this.checkKeys();
+        this.checkMouse();
         this.vel.x *= 0.9;
         this.vel.y *= 0.9;
-        this.x += (this.vel.x * deltaTime);
-        this.y += (this.vel.y * deltaTime);
-        
-        if(this.placingTile) {
+        this.x += this.vel.x * deltaTime;
+        this.y += this.vel.y * deltaTime;
 
+        if (this.placingTile) {
         }
     }
     colCheck(tile: Tile) {
@@ -98,6 +104,23 @@ class Player {
             }
         }
     }
+    checkMouse() {
+        if (mouse.down) {
+            if (this.holding) {
+                if (this.holding instanceof Gun) {
+                    this.holding.shoot(mouse.x + camera.x, mouse.y + camera.y);
+                }
+            }
+        } 
+        else {
+            if (this.holding) {
+                if (this.holding instanceof Gun) {
+                    this.holding.firing = false;
+                    this.holding.shotFirstBullet = false;
+                }
+            }
+        }
+    }
     checkKeys() {
         if (keys["w"]) {
             this.vel.y -= this.acceleration.y;
@@ -111,19 +134,6 @@ class Player {
         if (keys["d"]) {
             this.vel.x += this.acceleration.x;
         }
-
-        // if (this.vel.x > this.maxSpeed) {
-        //     this.vel.x = this.maxSpeed;
-        // }
-        // if (this.vel.x < -this.maxSpeed) {
-        //     this.vel.x = -this.maxSpeed;
-        // }
-        // if (this.vel.y > this.maxSpeed) {
-        //     this.vel.y = this.maxSpeed;
-        // }
-        // if (this.vel.y < -this.maxSpeed) {
-        //     this.vel.y = -this.maxSpeed;
-        // }
 
         if (this.vel.x < 0.1 && this.vel.x > -0.1) {
             this.vel.x = 0;

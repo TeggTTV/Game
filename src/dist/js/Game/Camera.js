@@ -5,6 +5,7 @@ class Camera {
         this.y = y;
         this.width = width;
         this.height = height;
+        console.log(this.width, this.height);
     }
     update(player) {
         this.x = player.x - this.width / 2;

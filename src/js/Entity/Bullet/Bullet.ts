@@ -1,0 +1,41 @@
+class Bullet {
+    owner: Player;
+    damage: number;
+    speed: number;
+    direction: Vector;
+    position: Vector;
+    radius: number;
+    imgPath: string;
+    img: HTMLImageElement;
+    constructor(
+        owner: Player,
+        damage: number,
+        speed: number,
+        direction: Vector,
+        position: Vector,
+        radius: number,
+        imgPath: string
+    ) {
+        this.owner = owner;
+        this.damage = damage;
+        this.speed = speed;
+        this.direction = direction;
+        this.position = position;
+        this.radius = radius;
+        this.imgPath = imgPath;
+        this.img = new Image();
+        this.img.src = this.imgPath;
+    }
+    update(deltaTime: number) {
+        this.position.x += this.direction.x * this.speed * deltaTime;
+        this.position.y += this.direction.y * this.speed * deltaTime;
+    }
+    async draw() {
+        let rotation = Math.atan2(this.direction.y, this.direction.x);
+        ctx.save();
+        ctx.translate(this.position.x, this.position.y);
+        ctx.rotate(rotation);
+        ctx.drawImage(this.img, 0, -2);
+        ctx.restore();
+    }
+}

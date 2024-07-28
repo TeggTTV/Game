@@ -19,6 +19,9 @@ class Vector {
     mag() {
         return Math.sqrt(this.x * this.x + this.y * this.y);
     }
+    angle() {
+        return Math.atan2(this.y, this.x);
+    }
     normalize() {
         return this.div(this.mag());
     }
@@ -36,9 +39,9 @@ class Vector {
     copy() {
         return new Vector(this.x, this.y);
     }
-    static random2D() {
+    static random2D(factor = 1) {
         let angle = Math.random() * Math.PI * 2;
-        return new Vector(Math.cos(angle), Math.sin(angle));
+        return new Vector(Math.cos(angle) * factor, Math.sin(angle) * factor);
     }
     static fromAngle(angle) {
         return new Vector(Math.cos(angle), Math.sin(angle));

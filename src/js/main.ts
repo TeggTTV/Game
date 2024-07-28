@@ -5,27 +5,24 @@ let game: Game;
 
 let res = { width: 0, height: 0 };
 
-let imgLoad = new ImageLoader();
-let player = new Player(5 * tileWidth, 5 * tileHeight);
-let map = new TileMap(tilesPerRow * 2, tilesPerColumn * 2);
+let imgLoad: ImageLoader = new ImageLoader();
+let player: Player = new Player(5 * tileWidth, 5 * tileHeight);
+let map: TileMap = new TileMap(60, 34);
 
-let camera = new Camera(player.x, player.y);
+let camera: Camera = new Camera(player.x, player.y);
+
+let testEnemy: Monster = new Monster(
+    10 * tileWidth,
+    10 * tileHeight,
+    new Image()
+);
 
 async function init() {
     canvas = document.getElementById("canvas") as HTMLCanvasElement;
     ctx = canvas.getContext("2d") as CanvasRenderingContext2D;
 
-    for (let r of resolutions) {
-        if (r.width < window.innerWidth && r.width > res.width) res = r;
-    }
-
     canvas.width = width;
     canvas.height = height;
-    // canvas.width = res.width;
-    // canvas.height = res.height;
-
-    // width = res.width;
-    // height = res.height;
 
     tileWidth = width / tilesPerRow;
     tileHeight = height / tilesPerColumn;
@@ -35,6 +32,24 @@ async function init() {
         "Other/Maps/Map1.json",
         "assets/images/asesprite/tileset.png"
     );
+
+    entities.push(testEnemy);
+
+    player.equip(
+        new Gun(
+            player,
+            "AK-47",
+            GunType.FullAuto,
+            {
+                roundsPerMinute: 600,
+                velocity: 1000,
+                range: 100,
+                inaccuracy: 0.01,
+            },
+            "assets/images/guns/AK-47.png"
+        )
+    );
+    player.setHolding(player.items[0]);
 
     game = new Game();
 
@@ -48,7 +63,6 @@ function render() {
     let currentTime = performance.now();
     deltaTime = (currentTime - lastTime) / 1000;
     lastTime = currentTime;
-    
 
     ctx.save();
     ctx.translate(-camera.x, -camera.y);

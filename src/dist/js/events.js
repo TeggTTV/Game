@@ -9,6 +9,12 @@ window.onload = () => {
             (canvas.height * (e.clientY - canvas.getBoundingClientRect().top)) /
                 canvas.height;
     });
+    canvas.addEventListener("mousedown", _ => {
+        mouse.down = 1;
+    });
+    canvas.addEventListener("mouseup", _ => {
+        mouse.down = 0;
+    });
 };
 window.addEventListener("keydown", (e) => {
     if (e.key.toLowerCase() === "shift") {

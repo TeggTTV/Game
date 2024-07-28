@@ -9,7 +9,7 @@ class ImageLoader {
      * @param {string} src The source of the image
      * @returns The image if it was loaded successfully, false if it was not
      */
-    async loadImage(name: string, src: string) {
+    async loadImage(name: string, src: string): Promise<HTMLImageElement | null> {
         let img = new Image();
         img.src = src;
 

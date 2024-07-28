@@ -14,22 +14,27 @@ let game;
 let res = { width: 0, height: 0 };
 let imgLoad = new ImageLoader();
 let player = new Player(5 * tileWidth, 5 * tileHeight);
-let map = new TileMap(tilesPerRow * 2, tilesPerColumn * 2);
+let map = new TileMap(60, 34);
 let camera = new Camera(player.x, player.y);
+let testEnemy = new Monster(10 * tileWidth, 10 * tileHeight, new Image());
 function init() {
     return __awaiter(this, void 0, void 0, function* () {
         canvas = document.getElementById("canvas");
         ctx = canvas.getContext("2d");
-        for (let r of resolutions) {
-            if (r.width < window.innerWidth && r.width > res.width)
-                res = r;
-        }
         canvas.width = width;
         canvas.height = height;
         tileWidth = width / tilesPerRow;
         tileHeight = height / tilesPerColumn;
         yield player.init();
         yield map.loadMap("Other/Maps/Map1.json", "assets/images/asesprite/tileset.png");
+        entities.push(testEnemy);
+        player.equip(new Gun(player, "AK-47", GunType.FullAuto, {
+            roundsPerMinute: 600,
+            velocity: 1000,
+            range: 100,
+            inaccuracy: 0.01,
+        }, "assets/images/guns/AK-47.png"));
+        player.setHolding(player.items[0]);
         game = new Game();
         window.requestAnimationFrame(render);
     });

@@ -22,8 +22,8 @@ class Player {
             y: 0,
         };
         this.acceleration = {
-            x: 10,
-            y: 10,
+            x: height * 0.05,
+            y: height * 0.05,
         };
         this.items = [];
         this.holding = undefined;
@@ -35,15 +35,22 @@ class Player {
             yield this.imgLoader.loadImage("Player", "assets/images/red.png");
         });
     }
+    equip(item) {
+        this.items.push(item);
+    }
     draw() {
         ctx.fillRect(this.x, this.y, tileWidth, tileHeight);
+        if (this.holding instanceof Gun) {
+            this.holding.draw();
+        }
     }
     update(deltaTime) {
         this.checkKeys();
+        this.checkMouse();
         this.vel.x *= 0.9;
         this.vel.y *= 0.9;
-        this.x += (this.vel.x * deltaTime);
-        this.y += (this.vel.y * deltaTime);
+        this.x += this.vel.x * deltaTime;
+        this.y += this.vel.y * deltaTime;
         if (this.placingTile) {
         }
     }
@@ -69,6 +76,23 @@ class Player {
             }
             else if (dir === "b" || dir === "t") {
                 this.vel.y = 0;
+            }
+        }
+    }
+    checkMouse() {
+        if (mouse.down) {
+            if (this.holding) {
+                if (this.holding instanceof Gun) {
+                    this.holding.shoot(mouse.x + camera.x, mouse.y + camera.y);
+                }
+            }
+        }
+        else {
+            if (this.holding) {
+                if (this.holding instanceof Gun) {
+                    this.holding.firing = false;
+                    this.holding.shotFirstBullet = false;
+                }
             }
         }
     }
