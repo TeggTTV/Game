@@ -1,15 +1,13 @@
 class Tile {
-    x: number;
-    y: number;
+    position: Vector;
     img: CanvasImageSource;
     hoverHint: HoverHint | undefined;
     firstHover: boolean;
     hovering: boolean;
     immovable: boolean;
     barrier: boolean;
-    constructor(x: number, y: number, img: CanvasImageSource) {
-        this.x = x;
-        this.y = y;
+    constructor(position: Vector, img: CanvasImageSource) {
+        this.position = position;
         this.img = img;
         this.hoverHint = undefined;
         this.firstHover = false;
@@ -22,8 +20,8 @@ class Tile {
         this.barrier = barrier;
     }
     draw() {
-        ctx.strokeRect(this.x, this.y, tileWidth, tileHeight);
-        ctx.drawImage(this.img, this.x, this.y, tileWidth, tileHeight);
+        // ctx.strokeRect(this.x, this.y, tileWidth, tileHeight);
+        ctx.drawImage(this.img, this.position.x, this.position.y, tileWidth, tileHeight);
         this.checkHover();
         // if (this.barrier) this.barrier.draw();
     }
@@ -43,13 +41,13 @@ class Tile {
     checkHover() {
         // check if tile is in camera view
         if (
-            this.x + tileWidth - camera.x > 0 &&
-            this.x - camera.x < camera.width &&
-            this.y + tileHeight - camera.y > 0 &&
-            this.y - camera.y < camera.height
+            this.position.x + tileWidth - camera.position.x > 0 &&
+            this.position.x - camera.position.x < camera.size.x &&
+            this.position.y + tileHeight - camera.position.y > 0 &&
+            this.position.y - camera.position.y < camera.size.y
         ) {
-            let cameraX = this.x - camera.x;
-            let cameraY = this.y - camera.y;
+            let cameraX = this.position.x - camera.position.x;
+            let cameraY = this.position.y - camera.position.y;
 
             // if(this.x === 2 && this.y === 2) console.log(cameraX, cameraY);
 
@@ -78,8 +76,8 @@ class Tile {
 
 class TileZone extends Tile {
     type: string | null;
-    constructor(x: number, y: number, img: CanvasImageSource) {
-        super(x, y, img);
+    constructor(position: Vector, img: CanvasImageSource) {
+        super(position, img);
         this.hoverHint = new HoverHint(["Zone"], 20, 0.2);
         this.type = null;
     }
@@ -88,7 +86,7 @@ class TileZone extends Tile {
     }
     draw() {
         if (!zonesVisible) return;
-        ctx.drawImage(this.img, this.x, this.y, tileWidth, tileHeight);
+        ctx.drawImage(this.img, this.position.x, this.position.y, tileWidth, tileHeight);
         this.checkHover();
     }
 }

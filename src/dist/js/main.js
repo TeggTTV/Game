@@ -13,10 +13,13 @@ let ctx;
 let game;
 let res = { width: 0, height: 0 };
 let imgLoad = new ImageLoader();
-let player = new Player(5 * tileWidth, 5 * tileHeight);
+let player = new Player(new Vector(5 * tileWidth, 5 * tileHeight));
 let map = new TileMap(60, 34);
-let camera = new Camera(player.x, player.y);
-let testEnemy = new Monster(10 * tileWidth, 10 * tileHeight, new Image());
+let camera = new Camera(new Vector(player.position.x, player.position.y), new Vector(width, height));
+let testEnemy = new Monster(new Vector(10 * tileWidth, 10 * tileHeight), new Vector(tileWidth, tileHeight), {
+    imgPath: "assets/images/red.png",
+    customs: new EntityCustoms(9999, 9999),
+});
 function init() {
     return __awaiter(this, void 0, void 0, function* () {
         canvas = document.getElementById("canvas");
@@ -29,10 +32,8 @@ function init() {
         yield map.loadMap("Other/Maps/Map1.json", "assets/images/asesprite/tileset.png");
         entities.push(testEnemy);
         player.equip(new Gun(player, "AK-47", GunType.FullAuto, {
-            roundsPerMinute: 600,
-            velocity: 1000,
-            range: 100,
-            inaccuracy: 0.01,
+            imgPath: BaseAK47.imgPath,
+            customs: new GunCustoms(1200, 1000, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
         }, "assets/images/guns/AK-47.png"));
         player.setHolding(player.items[0]);
         game = new Game();
@@ -46,17 +47,23 @@ function render() {
     deltaTime = (currentTime - lastTime) / 1000;
     lastTime = currentTime;
     ctx.save();
-    ctx.translate(-camera.x, -camera.y);
+    ctx.translate(-camera.position.x, -camera.position.y);
     map.draw();
     entities.forEach((entity) => {
         entity.draw();
+        entity.update(deltaTime);
+    });
+    projectiles.forEach((projectile) => {
+        projectile.draw();
+        projectile.update(deltaTime);
+    });
+    damageTexts.forEach((damageText) => {
+        damageText.draw();
+        damageText.update(deltaTime);
     });
     player.draw();
     player.update(deltaTime);
     camera.update(player);
-    entities.forEach((entity) => {
-        entity.update(deltaTime);
-    });
     for (let i = 0; i < map.tiles.length; i++) {
         if (map.tiles[i] instanceof TileZone) {
             player.colCheck(map.tiles[i]);
@@ -64,10 +71,24 @@ function render() {
         map.tiles[i].update();
         map.tiles[i].drawHoverHint();
     }
-    ctx.translate(camera.x, camera.y);
+    ctx.translate(camera.position.x, camera.position.y);
     ctx.restore();
-    camera.width = canvas.width;
-    camera.height = canvas.height;
+    camera.size.x = canvas.width;
+    camera.size.y = canvas.height;
+    ctx.fillStyle = "black";
+    ctx.font = "30px Arial";
+    ctx.fillText("Health: " + player.health, 10, 30);
+    if (player.holding instanceof Gun) {
+        ctx.fillText("Ammo: " +
+            player.holding.gunOptions.customs.ammo +
+            "/" +
+            player.holding.gunOptions.customs.reserveAmmo, 10, 60);
+        if (player.holding.gunOptions.customs.reloading) {
+            ctx.fillStyle = "red";
+            ctx.fillText("Reloading", 10, 90);
+            ctx.fillStyle = "black";
+        }
+    }
     window.requestAnimationFrame(render);
 }
 //# sourceMappingURL=main.js.map

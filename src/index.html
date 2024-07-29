@@ -5,9 +5,24 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Document</title>
         <link rel="stylesheet" href="./styles/main.css" />
+        <link rel="stylesheet" href="./styles/UI.css" />
     </head>
     <body>
         <canvas id="canvas"></canvas>
+        <canvas id="minimap"></canvas>
+        <!-- <div class="ui">
+            <div class="weapon">
+                <div class="left">
+                    <div class="weaponName"></div>
+                    <div class="weaponImage"></div>
+                </div>
+                <div class="right">
+                    <div class="ammo"></div>
+                    <div class="type"></div>
+                </div>
+            </div>
+            <div class="weapon"></div>
+        </div> -->
 
         <script src="dist/js/Util/Vector.js"></script>
         <script src="dist/js/Util/Timer.js"></script>
@@ -15,6 +30,7 @@
         <script src="dist/js/Util/col.js"></script>
 
         <script src="dist/js/HoverHint.js"></script>
+        <script src="dist/js/Game/DamageText.js"></script>
 
         <script src="dist/js/Tile/Tile.js"></script>
         <script src="dist/js/Tile/TileMap.js"></script>
@@ -30,10 +46,16 @@
         <script src="dist/js/Item/Gun/GunType/SemiAuto.js"></script>
         <script src="dist/js/Item/Gun/Gun.js"></script>
 
+        <script src="dist/js/Item/Gun/GunCustoms.js"></script>
+        <script src="dist/js/Item/Gun/Guns.js"></script>
+
         <script src="dist/js/Player.js"></script>
 
+        <script src="dist/js/Entity/EntityCustoms.js"></script>
         <script src="dist/js/Entity/Entity.js"></script>
         <script src="dist/js/Entity/Monster/Monster.js"></script>
+
+        <script src="dist/js/UI/Minimap.js"></script>
 
         <script src="dist/js/Game/Camera.js"></script>
 

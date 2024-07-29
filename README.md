@@ -11,6 +11,9 @@
     - ✔️ Multi-line support
 - ✔️ Create an item class
 - ✔️ Create an entity class (for all entities)
+    - ✔️ Entity options added
+    - ✔️ Entity health added
+    - ✔️ Entity damage added  
     - ✔️ Create a monster class
     - ✔️ Create an animal class
     - ✔️ Create an NPC class
@@ -21,8 +24,13 @@
 - ✔️ Added a weapon class   
     - ✔️ Added a Gun class
         - ✔️ Gun Shoots with GunOptions as options
-        - ✔️ GunOptions have a firerate, velocity, range, and accuracy.
+        - ✔️ GunOptions have a firerate, velocity, range, accuracy, etc.
         - ✔️ Added Gun Recoil   
+        - ✔️ Added Gun Reload
+        - ✔️ Added Gun Ammo
+        - ✔️ Added Gun Ammo UI
+        - ❌ Added Gun Ammo Pickup
+
 - ❌ Add a map
 - ❌ Add a player inventory
 - ❌ Add a player health bar

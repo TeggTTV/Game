@@ -28,6 +28,8 @@ let tileHeight: number = height / tilesPerColumn;
 const zonesVisible: boolean = false;
 
 const entities: any = [];
+const projectiles: any = [];
+const damageTexts: any = [];
 
 // let resolutions: any = [];
 // let resolut 
@@ -49,8 +51,8 @@ function resize() {
 }
 
 function resizeCamera(camera: Camera) {
-    camera.width = width;
-    camera.height = height;
+    camera.size.x = width;
+    camera.size.y = height;
 }
 
 function dist(x1: number, y1: number, x2: number, y2: number) {

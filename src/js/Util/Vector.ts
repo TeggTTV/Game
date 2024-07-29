@@ -55,11 +55,17 @@ class Vector {
     static sub(v1: Vector, v2: Vector) {
         return new Vector(v1.x - v2.x, v1.y - v2.y);
     }
-    static mul(v: Vector, s: number) {
-        return new Vector(v.x * s, v.y * s);
+    // static mul(v: Vector, s: number) {
+    //     return new Vector(v.x * s, v.y * s);
+    // }
+    // static div(v: Vector, s: number) {
+    //     return new Vector(v.x / s, v.y / s);
+    // }
+    static mul(v1: Vector, v2: Vector) {
+        return new Vector(v1.x * v2.x, v1.y * v2.y);
     }
-    static div(v: Vector, s: number) {
-        return new Vector(v.x / s, v.y / s);
+    static div(v1: Vector, v2: Vector) {
+        return new Vector(v1.x / v2.x, v1.y / v2.y);
     }
     static distance(v1: Vector, v2: Vector) {
         return v1.sub(v2).mag();

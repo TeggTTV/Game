@@ -1,22 +1,56 @@
+type EntityOptions = {
+    imgPath: string;
+    customs: EntityCustoms;
+};
+
 class Entity {
-    x: number;
-    y: number;
+    position: Vector;
+    size: Vector;
+    options: EntityOptions;
     image: CanvasImageSource;
-    vel: {x: number, y: number};
-    acceleration: {x: number, y: number};
-    constructor(x: number, y: number, image: CanvasImageSource) {
-        this.x = x;
-        this.y = y;
-        this.image = image;
-        this.vel = {x:0,y:0};
-        this.acceleration = {x:0,y:0};
+    vel: Vector;
+    acceleration: Vector;
+
+    health: number;
+    maxHealth: number;
+
+    constructor(position: Vector, size: Vector, options: EntityOptions) {
+        this.position = position;
+        this.size = size;
+        this.options = options;
+
+        this.image = new Image();
+        this.image.src = options.imgPath;
+
+        this.vel = new Vector(0, 0);
+        this.acceleration = new Vector(0, 0);
+
+        this.health = 1;
+        this.maxHealth = 100;
     }
-    colCheck(pos: Vector) {
+    colCheck(pos: Thing) {
         let dir = colCheck(this, pos);
         if (dir === "l" || dir === "r") {
             this.vel.x = 0;
         } else if (dir === "b" || dir === "t") {
             this.vel.y = 0;
         }
+    }
+    handleProjectileCollision(projectile: Bullet) {
+        if (
+            this.position.x < projectile.position.x + projectile.radius &&
+            this.position.x + this.size.x > projectile.position.x &&
+            this.position.y < projectile.position.y + projectile.radius &&
+            this.position.y + this.size.y > projectile.position.y
+        ) {
+            this.health -= projectile.damage;
+            let damageText = new DamageText(this.position.copy().add(new Vector(this.size.x/4, this.size.y/2)), projectile.damage);
+            damageTexts.push(damageText);
+            projectile.delete();
+        }
+    }
+    delete() {
+        let index = entities.indexOf(this);
+        entities.splice(index, 1);
     }
 }

@@ -6,15 +6,23 @@ let game: Game;
 let res = { width: 0, height: 0 };
 
 let imgLoad: ImageLoader = new ImageLoader();
-let player: Player = new Player(5 * tileWidth, 5 * tileHeight);
+let player: Player = new Player(new Vector(5 * tileWidth, 5 * tileHeight));
 let map: TileMap = new TileMap(60, 34);
 
-let camera: Camera = new Camera(player.x, player.y);
+let camera: Camera = new Camera(
+    new Vector(player.position.x, player.position.y),
+    new Vector(width, height)
+);
+
+// let minimap = new Minimap();
 
 let testEnemy: Monster = new Monster(
-    10 * tileWidth,
-    10 * tileHeight,
-    new Image()
+    new Vector(10 * tileWidth, 10 * tileHeight),
+    new Vector(tileWidth, tileHeight),
+    {
+        imgPath: "assets/images/red.png",
+        customs: new EntityCustoms(9999, 9999),
+    }
 );
 
 async function init() {
@@ -41,10 +49,22 @@ async function init() {
             "AK-47",
             GunType.FullAuto,
             {
-                roundsPerMinute: 600,
-                velocity: 1000,
-                range: 100,
-                inaccuracy: 0.01,
+                imgPath: BaseAK47.imgPath,
+                customs: new GunCustoms(
+                    1200,
+                    1000,
+                    100,
+                    0.01,
+                    10,
+                    0,
+                    2,
+                    30,
+                    90,
+                    false,
+                    10,
+                    1,
+                    5
+                ),
             },
             "assets/images/guns/AK-47.png"
         )
@@ -65,7 +85,7 @@ function render() {
     lastTime = currentTime;
 
     ctx.save();
-    ctx.translate(-camera.x, -camera.y);
+    ctx.translate(-camera.position.x, -camera.position.y);
 
     // draw map
     map.draw();
@@ -73,19 +93,23 @@ function render() {
     // draw al entities
     entities.forEach((entity: any) => {
         entity.draw();
+        entity.update(deltaTime);
     });
 
+    projectiles.forEach((projectile: any) => {
+        projectile.draw();
+        projectile.update(deltaTime);
+    });
+    damageTexts.forEach((damageText: any) => {
+        damageText.draw();
+        damageText.update(deltaTime);
+    });
     // player drawn last
     player.draw();
     player.update(deltaTime);
 
     // update camera to follow player
     camera.update(player);
-
-    // update all entities
-    entities.forEach((entity: any) => {
-        entity.update(deltaTime);
-    });
 
     for (let i = 0; i < map.tiles.length; i++) {
         // Check if mouse is hovering over a tile
@@ -100,14 +124,37 @@ function render() {
         map.tiles[i].drawHoverHint();
     }
 
-    ctx.translate(camera.x, camera.y);
+    ctx.translate(camera.position.x, camera.position.y);
     ctx.restore();
 
-    camera.width = canvas.width;
-    camera.height = canvas.height;
+    camera.size.x = canvas.width;
+    camera.size.y = canvas.height;
 
     // lastCanvasWidth = canvas.width;
     // lastCanvasHeight = canvas.height;
+
+    // ui
+    ctx.fillStyle = "black";
+    ctx.font = "30px Arial";
+    ctx.fillText("Health: " + player.health, 10, 30);
+    if (player.holding instanceof Gun) {
+        ctx.fillText(
+            "Ammo: " +
+                player.holding.gunOptions.customs.ammo +
+                "/" +
+                player.holding.gunOptions.customs.reserveAmmo,
+            10,
+            60
+        );
+        if(player.holding.gunOptions.customs.reloading) {
+            ctx.fillStyle = "red";
+            ctx.fillText("Reloading", 10, 90);
+            ctx.fillStyle = "black";
+        }
+    }
+
+    // minimap.draw();
+    // minimap.update();
 
     window.requestAnimationFrame(render);
 }

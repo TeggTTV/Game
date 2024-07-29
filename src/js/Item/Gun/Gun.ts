@@ -1,8 +1,6 @@
 type GunOptions = {
-    roundsPerMinute: number; // bps
-    velocity: number; // speed of bullet
-    range: number;
-    inaccuracy: number; // percent 0-1
+    imgPath: string;
+    customs: GunCustoms;
 };
 
 class Gun extends Item {
@@ -17,19 +15,26 @@ class Gun extends Item {
     fireTimer: number;
 
     tipOfGun: Vector;
+    recoilAmount: number;
 
     constructor(
         owner: Player,
         name: string,
         gunType: GunType,
-        gunOptions: GunOptions,
+        gunOptions: {
+            imgPath: string;
+            customs: GunCustoms;
+        },
         imgPath: string
     ) {
         super(owner, name, imgPath);
         this.name = name;
         this.type = gunType;
 
-        this.gunOptions = gunOptions;
+        this.gunOptions = {
+            imgPath: gunOptions.imgPath,
+            customs: gunOptions.customs,
+        };
 
         this.shotFirstBullet = false;
         this.firing = false;
@@ -37,9 +42,10 @@ class Gun extends Item {
         this.fireTimer = 0;
 
         this.img = new Image();
-        this.img.src = imgPath;
+        this.img.src = gunOptions.imgPath;
 
         this.tipOfGun = new Vector(0, 0);
+        this.recoilAmount = 0;
     }
     getName() {
         return this.name;
@@ -48,36 +54,109 @@ class Gun extends Item {
         return this.type;
     }
 
+    recoilAnimation() {
+        // ex: 0.5, 0.1, 1
+        let recoil = this.gunOptions.customs.recoilPower;
+        let recoilSpeed = this.gunOptions.customs.recoilSpeed;
+        let recoilDuration = this.gunOptions.customs.recoilDuration;
+
+        let recoilTimer = 0;
+
+        let recoilInterval = setInterval(() => {
+            this.recoilAmount = -Math.sin(recoilTimer) * recoil;
+            recoilTimer += recoilSpeed;
+
+            if (recoilTimer >= recoilDuration) {
+                clearInterval(recoilInterval);
+                // reset recoil amount
+                let recoilReset = setInterval(() => {
+                    this.recoilAmount += 0.5;
+                    if (this.recoilAmount >= 0) {
+                        this.recoilAmount = 0;
+                        clearInterval(recoilReset);
+                    }
+                }, 1000 / 60);
+            }
+        }, 1000 / 60);
+    }
+
+    reload() {
+        if(this.gunOptions.customs.reloading || this.gunOptions.customs.reserveAmmo === 0) return;
+        this.gunOptions.customs.reloading = true;
+
+        if (
+            this.gunOptions.customs.ammo < this.gunOptions.customs.magazineSize
+        ) {
+            new Timer(
+                0,
+                this.gunOptions.customs.reloadTime,
+                1,
+                true,
+                () => {
+                    // do nothing
+                },
+                () => {
+                    if (this.owner.holding instanceof Gun) {
+                        let neededAmmo =
+                            this.gunOptions.customs.magazineSize -
+                            this.gunOptions.customs.ammo;
+
+                        if (this.gunOptions.customs.reserveAmmo >= neededAmmo) {
+                            if (this.gunOptions.customs.ammo >= 1) {
+                                this.gunOptions.customs.ammo += neededAmmo + 1;
+                                this.gunOptions.customs.reserveAmmo -=
+                                    neededAmmo + 1;
+                            } else {
+                                this.gunOptions.customs.ammo += neededAmmo;
+                                this.gunOptions.customs.reserveAmmo -=
+                                    neededAmmo;
+                            }
+                        } else {
+                            this.gunOptions.customs.ammo +=
+                                this.gunOptions.customs.reserveAmmo;
+                            this.gunOptions.customs.reserveAmmo = 0;
+                        }
+                    }
+                    this.gunOptions.customs.reloading = false;
+                }
+            );
+        }
+    }
+
     draw() {
         ctx.save();
 
         let direction = new Vector(
-            mouse.x + camera.x - this.owner.x - this.owner.width / 2,
-            mouse.y + camera.y - this.owner.y - this.owner.height / 2
+            mouse.x +
+                camera.position.x -
+                this.owner.position.x -
+                this.owner.width / 2,
+            mouse.y +
+                camera.position.y -
+                this.owner.position.y -
+                this.owner.height / 2
         ).normalize();
 
         ctx.translate(
-            this.owner.x + 
-            this.owner.width / 2 +
-            // (this.owner.width * .25) + 
+            this.owner.position.x +
+                this.owner.width / 2 +
                 (direction.x * this.owner.width) / 2,
-            this.owner.y + 
-            this.owner.height / 2 +
-            // (this.owner.height * .75) +
+            this.owner.position.y +
+                this.owner.height / 2 +
                 (direction.y * this.owner.height) / 2
         );
 
         ctx.rotate(direction.angle());
 
-        ctx.drawImage(this.img, 0, 0);
+        ctx.drawImage(this.img, this.recoilAmount, 0);
 
         ctx.restore();
 
         let tipOfGun = new Vector(
-            this.owner.x +
+            this.owner.position.x +
                 this.owner.width / 2 +
                 this.img.width * Math.cos(direction.angle()),
-            this.owner.y +
+            this.owner.position.y +
                 this.owner.height / 2 +
                 this.img.width * Math.sin(direction.angle())
         );
@@ -93,17 +172,18 @@ class Gun extends Item {
         return new Vector(Math.cos(newAngle), Math.sin(newAngle));
     }
     async shoot(mouseX: number, mouseY: number) {
-        let roundsPerMillsec = 1 / (this.gunOptions.roundsPerMinute / 60);
+        let roundsPerMillsec =
+            1 / (this.gunOptions.customs.roundsPerMinute / 60);
 
         let direction = new Vector(
-            mouseX - this.owner.x - this.owner.width / 2,
-            mouseY - this.owner.y - this.owner.height / 2
+            mouseX - this.owner.position.x - this.owner.width / 2,
+            mouseY - this.owner.position.y - this.owner.height / 2
         );
 
-        if (this.gunOptions.inaccuracy !== 0) {
+        if (this.gunOptions.customs.inaccuracy !== 0) {
             direction = this.calculateInaccuracy(
                 direction,
-                this.gunOptions.inaccuracy
+                this.gunOptions.customs.inaccuracy
             );
         } else {
             direction = direction.normalize();
@@ -112,7 +192,7 @@ class Gun extends Item {
         let bullet = new Bullet(
             this.owner,
             10,
-            this.gunOptions.velocity,
+            this.gunOptions.customs.velocity,
             direction,
             this.tipOfGun,
             5,
@@ -120,7 +200,10 @@ class Gun extends Item {
         );
 
         if (!this.shotFirstBullet && !this.firing) {
-            entities.push(bullet);
+            projectiles.push(bullet);
+            this.gunOptions.customs.ammo--;
+
+            this.recoilAnimation();
             await wait(roundsPerMillsec);
 
             this.shotFirstBullet = true;
@@ -129,7 +212,10 @@ class Gun extends Item {
             this.fireTimer += deltaTime;
 
             if (this.fireTimer >= roundsPerMillsec) {
-                entities.push(bullet);
+                projectiles.push(bullet);
+                this.gunOptions.customs.ammo--;
+
+                this.recoilAnimation();
                 this.fireTimer = 0;
             }
         }

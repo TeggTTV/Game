@@ -43,10 +43,10 @@ class HoverHint {
             height: h,
         };
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-        ctx.fillRect(camera.x + background.x, camera.y + background.y, background.width + margin * 2, background.height + margin * 2);
+        ctx.fillRect(camera.position.x + background.x, camera.position.y + background.y, background.width + margin * 2, background.height + margin * 2);
         ctx.fillStyle = "white";
         for (let i = 0; i < this.descriptions.length; i++) {
-            ctx.fillText(this.descriptions[i].text, camera.x + mouse.x + margin, camera.y +
+            ctx.fillText(this.descriptions[i].text, camera.position.x + mouse.x + margin, camera.position.y +
                 mouse.y +
                 this.descriptions[i].height +
                 i * this.descriptions[i].height);

@@ -11,8 +11,8 @@ class Main {
         this.mainWindow = null;
         this.createWindow = () => {
             this.mainWindow = new BrowserWindow({
-                width: 640,
-                height: 480,
+                width: 1600,
+                height: 900 + 40,
                 center: true,
                 resizable: false,
                 minWidth: 640,

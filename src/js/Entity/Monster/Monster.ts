@@ -1,31 +1,31 @@
 class Monster extends Entity {
-    constructor(x: number, y: number, image: CanvasImageSource) {
-        super(x, y, image);
+    constructor(position: Vector, size: Vector, options: EntityOptions) {
+        super(position, size, options);
+        this.position = position;
+        this.size = size;
+        this.options = options;
 
-        this.vel = {
-            x: 0,
-            y: 0,
-        };
-        this.acceleration = {
-            x: 4,
-            y: 4,
-        };
+        this.health = options.customs.maxHealth;
+
+        this.vel = new Vector(0, 0);
+        this.acceleration = new Vector(4, 4);
     }
     draw() {
         // until we have a monster image, we'll use a red square
         ctx.fillStyle = "red";
-        ctx.fillRect(this.x, this.y, tileWidth, tileHeight);
+        ctx.fillRect(
+            this.position.x,
+            this.position.y,
+            this.size.x,
+            this.size.y
+        );
     }
     update(deltaTime: number) {
-        // random movement
-        if (Math.random() < 0.02) {
-            this.vel.x = (Math.random() - 0.5) * 20;
-            this.vel.y = (Math.random() - 0.5) * 20;
-        }
+        this.vel = this.vel.mul(0.9);
+        this.position = this.position.add(this.vel.mul(deltaTime));
 
-        this.vel.x *= 0.9;
-        this.vel.y *= 0.9;
-        this.x += (this.vel.x * deltaTime) / 100;
-        this.y += (this.vel.y * deltaTime) / 100;    
+        if (this.health <= 0) {
+            this.delete();
+        }
     }
 }

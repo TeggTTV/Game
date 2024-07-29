@@ -1,15 +1,14 @@
 "use strict";
 class Barrier extends Tile {
-    constructor(x, y, img) {
-        super(x, y, img);
-        this.x = x;
-        this.y = y;
+    constructor(position, img) {
+        super(position, img);
+        this.position = position;
         this.img = img;
         this.immovable = true;
     }
     draw() {
         ctx.fillStyle = "black";
-        ctx.fillRect(this.x, this.y, tileWidth, tileHeight);
+        ctx.fillRect(this.position.x, this.position.y, tileWidth, tileHeight);
     }
 }
 //# sourceMappingURL=Barrier.js.map

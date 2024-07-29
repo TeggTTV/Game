@@ -1,35 +1,31 @@
 class Camera {
-    x: number;
-    y: number;
-    width: number;
-    height: number;
-    constructor(x: number, y: number) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        console.log(this.width, this.height);
+    position: Vector;
+    size: Vector;
+    constructor(position: Vector, size: Vector = new Vector(width, height)) {
+        this.position = position;
+        this.size = size;
+        console.log(this.size.x, this.size.y);
         
     }
     update(player: Player) {
-        this.x = player.x - this.width / 2;
-        this.y = player.y - this.height / 2;
+        this.position.x = player.position.x - this.size.x / 2;
+        this.position.y = player.position.y - this.size.y / 2;
 
-        if (this.x < 0) {
-            this.x = 0;
+        if (this.position.x < 0) {
+            this.position.x = 0;
         }
-        if (this.y < 0) {
-            this.y = 0;
+        if (this.position.y < 0) {
+            this.position.y = 0;
         }
-        if (this.x > map.sizeX * tileWidth - this.width) {
-            this.x = map.sizeX * tileWidth - this.width;
+        if (this.position.x > map.sizeX * tileWidth - this.size.x) {
+            this.position.x = map.sizeX * tileWidth - this.size.x;
         }
-        if (this.y > map.sizeY * tileHeight - this.height) {
-            this.y = map.sizeY * tileHeight - this.height;
+        if (this.position.y > map.sizeY * tileHeight - this.size.y) {
+            this.position.y = map.sizeY * tileHeight - this.size.y;
         }
     }
     resizeEvent() {
-        this.width = width;
-        this.height = height;
+        this.size.x = width;
+        this.size.y = height;
     }
 }

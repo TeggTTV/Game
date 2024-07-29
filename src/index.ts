@@ -44,8 +44,10 @@ class Main {
 
     createWindow = () => {
         this.mainWindow = new BrowserWindow({
-            width: 640,
-            height: 480,
+            // width: 640,
+            // height: 480,
+            width: 1600,
+            height: 900 + 40,
             // frame: false,
             center: true,
             resizable: false,
@@ -69,15 +71,14 @@ class Main {
 
         resolutions = getAvailableResolution();
 
-        for(let res of resolutions) {
-            if(res.width / res.height !== 16 / 9) {
+        for (let res of resolutions) {
+            if (res.width / res.height !== 16 / 9) {
                 resolutions.splice(resolutions.indexOf(res), 1);
             }
         }
 
         console.log(resolutions);
-        
-        
+
         ipc.on("getResolutions", (event) => {
             event.sender.send("resolutions", resolutions);
         });

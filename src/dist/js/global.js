@@ -24,13 +24,15 @@ let tileWidth = width / tilesPerRow;
 let tileHeight = height / tilesPerColumn;
 const zonesVisible = false;
 const entities = [];
+const projectiles = [];
+const damageTexts = [];
 function resize() {
     tileWidth = width / tilesPerRow;
     tileHeight = height / tilesPerColumn;
 }
 function resizeCamera(camera) {
-    camera.width = width;
-    camera.height = height;
+    camera.size.x = width;
+    camera.size.y = height;
 }
 function dist(x1, y1, x2, y2) {
     return Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);

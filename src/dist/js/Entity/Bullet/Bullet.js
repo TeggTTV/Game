@@ -23,6 +23,13 @@ class Bullet {
     update(deltaTime) {
         this.position.x += this.direction.x * this.speed * deltaTime;
         this.position.y += this.direction.y * this.speed * deltaTime;
+        entities.forEach((entity) => {
+            entity.handleProjectileCollision(this);
+        });
+    }
+    delete() {
+        let index = projectiles.indexOf(this);
+        projectiles.splice(index, 1);
     }
     draw() {
         return __awaiter(this, void 0, void 0, function* () {

@@ -1,12 +1,11 @@
 type Thing = {
-    x: number;
-    y: number;
+    position: Vector
 };
 
 function colCheck(shapeA: Thing, shapeB: Thing, moveShapeA = true) {
     // get the vectors to check against
-    var vX = shapeA.x + tileWidth / 2 - (shapeB.x + tileWidth / 2),
-        vY = shapeA.y + tileHeight / 2 - (shapeB.y + tileHeight / 2),
+    var vX = shapeA.position.x + tileWidth / 2 - (shapeB.position.x + tileWidth / 2),
+        vY = shapeA.position.y + tileHeight / 2 - (shapeB.position.y + tileHeight / 2),
         // add the half widths and half heights of the objects
         hWidths = tileWidth / 2 + tileWidth / 2,
         hHeights = tileHeight / 2 + tileHeight / 2,
@@ -20,18 +19,18 @@ function colCheck(shapeA: Thing, shapeB: Thing, moveShapeA = true) {
         if (oX >= oY) {
             if (vY > 0) {
                 colDir = "t";
-                if (moveShapeA) shapeA.y += oY;
+                if (moveShapeA) shapeA.position.y += oY;
             } else {
                 colDir = "b";
-                if (moveShapeA) shapeA.y -= oY;
+                if (moveShapeA) shapeA.position.y -= oY;
             }
         } else {
             if (vX > 0) {
                 colDir = "l";
-                if (moveShapeA) shapeA.x += oX;
+                if (moveShapeA) shapeA.position.x += oX;
             } else {
                 colDir = "r";
-                if (moveShapeA) shapeA.x -= oX;
+                if (moveShapeA) shapeA.position.x -= oX;
             }
         }
     }

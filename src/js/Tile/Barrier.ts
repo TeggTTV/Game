@@ -1,14 +1,13 @@
 class Barrier extends Tile {
     immovable: boolean;
-    constructor(x: number, y: number, img: CanvasImageSource) {
-        super(x, y, img);
-        this.x = x;
-        this.y = y;
+    constructor(position: Vector, img: CanvasImageSource) {
+        super(position, img);
+        this.position = position;
         this.img = img;
         this.immovable = true;
     }
     draw() {
         ctx.fillStyle = "black";
-        ctx.fillRect(this.x, this.y, tileWidth, tileHeight);
+        ctx.fillRect(this.position.x, this.position.y, tileWidth, tileHeight);
     }
 }

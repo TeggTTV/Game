@@ -45,9 +45,9 @@ class TileMap {
         for (let i = 0; i < grassZone.data.length; i++) {
             for (let j = 0; j < grassZone.data[i].length; j++) {
                 if (images[grassZone.data[i][j] - 1] === undefined) continue;
-                let tile = new Tile(
+                let tile = new Tile(new Vector(
                     j * tileWidth,
-                    i * tileHeight,
+                    i * tileHeight),
                     images[grassZone.data[i][j] - 1]
                 );
                 // if (Math.random() > 0.9)
@@ -61,7 +61,7 @@ class TileMap {
         for (let i = 0; i < waterZone.data.length; i++) {
             for (let j = 0; j < waterZone.data[i].length; j++) {
                 if (images[waterZone.data[i][j] - 1] === undefined) continue;
-                let tile = new TileZone(j*tileWidth, i*tileHeight, images[waterZone.data[i][j] - 1]);
+                let tile = new TileZone(new Vector(j*tileWidth, i*tileHeight), images[waterZone.data[i][j] - 1]);
                 tile.setType("water");
                 this.addTile(tile);
             }

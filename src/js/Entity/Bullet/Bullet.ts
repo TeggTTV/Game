@@ -29,6 +29,14 @@ class Bullet {
     update(deltaTime: number) {
         this.position.x += this.direction.x * this.speed * deltaTime;
         this.position.y += this.direction.y * this.speed * deltaTime;
+
+        entities.forEach((entity: Entity) => {
+            entity.handleProjectileCollision(this);            
+        });
+    }
+    delete() {
+        let index = projectiles.indexOf(this);
+        projectiles.splice(index, 1);
     }
     async draw() {
         let rotation = Math.atan2(this.direction.y, this.direction.x);

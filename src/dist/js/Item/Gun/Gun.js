@@ -14,13 +14,17 @@ class Gun extends Item {
         this.shotFirstBullet = false;
         this.name = name;
         this.type = gunType;
-        this.gunOptions = gunOptions;
+        this.gunOptions = {
+            imgPath: gunOptions.imgPath,
+            customs: gunOptions.customs,
+        };
         this.shotFirstBullet = false;
         this.firing = false;
         this.fireTimer = 0;
         this.img = new Image();
-        this.img.src = imgPath;
+        this.img.src = gunOptions.imgPath;
         this.tipOfGun = new Vector(0, 0);
+        this.recoilAmount = 0;
     }
     getName() {
         return this.name;
@@ -28,20 +32,78 @@ class Gun extends Item {
     getType() {
         return this.type;
     }
+    recoilAnimation() {
+        let recoil = this.gunOptions.customs.recoilPower;
+        let recoilSpeed = this.gunOptions.customs.recoilSpeed;
+        let recoilDuration = this.gunOptions.customs.recoilDuration;
+        let recoilTimer = 0;
+        let recoilInterval = setInterval(() => {
+            this.recoilAmount = -Math.sin(recoilTimer) * recoil;
+            recoilTimer += recoilSpeed;
+            if (recoilTimer >= recoilDuration) {
+                clearInterval(recoilInterval);
+                let recoilReset = setInterval(() => {
+                    this.recoilAmount += 0.5;
+                    if (this.recoilAmount >= 0) {
+                        this.recoilAmount = 0;
+                        clearInterval(recoilReset);
+                    }
+                }, 1000 / 60);
+            }
+        }, 1000 / 60);
+    }
+    reload() {
+        if (this.gunOptions.customs.reloading || this.gunOptions.customs.reserveAmmo === 0)
+            return;
+        this.gunOptions.customs.reloading = true;
+        if (this.gunOptions.customs.ammo < this.gunOptions.customs.magazineSize) {
+            new Timer(0, this.gunOptions.customs.reloadTime, 1, true, () => {
+            }, () => {
+                if (this.owner.holding instanceof Gun) {
+                    let neededAmmo = this.gunOptions.customs.magazineSize -
+                        this.gunOptions.customs.ammo;
+                    if (this.gunOptions.customs.reserveAmmo >= neededAmmo) {
+                        if (this.gunOptions.customs.ammo >= 1) {
+                            this.gunOptions.customs.ammo += neededAmmo + 1;
+                            this.gunOptions.customs.reserveAmmo -=
+                                neededAmmo + 1;
+                        }
+                        else {
+                            this.gunOptions.customs.ammo += neededAmmo;
+                            this.gunOptions.customs.reserveAmmo -=
+                                neededAmmo;
+                        }
+                    }
+                    else {
+                        this.gunOptions.customs.ammo +=
+                            this.gunOptions.customs.reserveAmmo;
+                        this.gunOptions.customs.reserveAmmo = 0;
+                    }
+                }
+                this.gunOptions.customs.reloading = false;
+            });
+        }
+    }
     draw() {
         ctx.save();
-        let direction = new Vector(mouse.x + camera.x - this.owner.x - this.owner.width / 2, mouse.y + camera.y - this.owner.y - this.owner.height / 2).normalize();
-        ctx.translate(this.owner.x +
+        let direction = new Vector(mouse.x +
+            camera.position.x -
+            this.owner.position.x -
+            this.owner.width / 2, mouse.y +
+            camera.position.y -
+            this.owner.position.y -
+            this.owner.height / 2).normalize();
+        ctx.translate(this.owner.position.x +
             this.owner.width / 2 +
-            (direction.x * this.owner.width) / 2, this.owner.y +
+            (direction.x * this.owner.width) / 2, this.owner.position.y +
             this.owner.height / 2 +
             (direction.y * this.owner.height) / 2);
         ctx.rotate(direction.angle());
-        ctx.drawImage(this.img, 0, 0);
+        ctx.drawImage(this.img, this.recoilAmount, 0);
         ctx.restore();
-        let tipOfGun = new Vector(this.owner.x +
+        let tipOfGun = new Vector(this.owner.position.x +
             this.owner.width / 2 +
-            this.img.width * Math.cos(direction.angle()), this.owner.y +
+            this.img.width * Math.cos(direction.angle()), this.owner.position.y +
             this.owner.height / 2 +
             this.img.width * Math.sin(direction.angle()));
         this.tipOfGun = tipOfGun;
@@ -54,17 +116,19 @@ class Gun extends Item {
     }
     shoot(mouseX, mouseY) {
         return __awaiter(this, void 0, void 0, function* () {
-            let roundsPerMillsec = 1 / (this.gunOptions.roundsPerMinute / 60);
-            let direction = new Vector(mouseX - this.owner.x - this.owner.width / 2, mouseY - this.owner.y - this.owner.height / 2);
-            if (this.gunOptions.inaccuracy !== 0) {
-                direction = this.calculateInaccuracy(direction, this.gunOptions.inaccuracy);
+            let roundsPerMillsec = 1 / (this.gunOptions.customs.roundsPerMinute / 60);
+            let direction = new Vector(mouseX - this.owner.position.x - this.owner.width / 2, mouseY - this.owner.position.y - this.owner.height / 2);
+            if (this.gunOptions.customs.inaccuracy !== 0) {
+                direction = this.calculateInaccuracy(direction, this.gunOptions.customs.inaccuracy);
             }
             else {
                 direction = direction.normalize();
             }
-            let bullet = new Bullet(this.owner, 10, this.gunOptions.velocity, direction, this.tipOfGun, 5, "assets/images/bullet.png");
+            let bullet = new Bullet(this.owner, 10, this.gunOptions.customs.velocity, direction, this.tipOfGun, 5, "assets/images/bullet.png");
             if (!this.shotFirstBullet && !this.firing) {
-                entities.push(bullet);
+                projectiles.push(bullet);
+                this.gunOptions.customs.ammo--;
+                this.recoilAnimation();
                 yield wait(roundsPerMillsec);
                 this.shotFirstBullet = true;
             }
@@ -72,7 +136,9 @@ class Gun extends Item {
                 this.firing = true;
                 this.fireTimer += deltaTime;
                 if (this.fireTimer >= roundsPerMillsec) {
-                    entities.push(bullet);
+                    projectiles.push(bullet);
+                    this.gunOptions.customs.ammo--;
+                    this.recoilAnimation();
                     this.fireTimer = 0;
                 }
             }

@@ -1,29 +1,24 @@
 "use strict";
 class Monster extends Entity {
-    constructor(x, y, image) {
-        super(x, y, image);
-        this.vel = {
-            x: 0,
-            y: 0,
-        };
-        this.acceleration = {
-            x: 4,
-            y: 4,
-        };
+    constructor(position, size, options) {
+        super(position, size, options);
+        this.position = position;
+        this.size = size;
+        this.options = options;
+        this.health = options.customs.maxHealth;
+        this.vel = new Vector(0, 0);
+        this.acceleration = new Vector(4, 4);
     }
     draw() {
         ctx.fillStyle = "red";
-        ctx.fillRect(this.x, this.y, tileWidth, tileHeight);
+        ctx.fillRect(this.position.x, this.position.y, this.size.x, this.size.y);
     }
     update(deltaTime) {
-        if (Math.random() < 0.02) {
-            this.vel.x = (Math.random() - 0.5) * 20;
-            this.vel.y = (Math.random() - 0.5) * 20;
+        this.vel = this.vel.mul(0.9);
+        this.position = this.position.add(this.vel.mul(deltaTime));
+        if (this.health <= 0) {
+            this.delete();
         }
-        this.vel.x *= 0.9;
-        this.vel.y *= 0.9;
-        this.x += (this.vel.x * deltaTime) / 100;
-        this.y += (this.vel.y * deltaTime) / 100;
     }
 }
 //# sourceMappingURL=Monster.js.map
