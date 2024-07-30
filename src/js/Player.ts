@@ -1,6 +1,6 @@
 class Player {
     position: Vector;
-    size: Vector
+    size: Vector;
 
     imgLoader: ImageLoader;
     image: CanvasImageSource;
@@ -73,34 +73,40 @@ class Player {
         if (this.placingTile) {
         }
     }
-    colCheck(tile: Tile) {
-        if (tile instanceof TileZone) {
-            // check type of tile
-            if (tile instanceof TileZone) {
-                switch (tile.type) {
-                    case "water":
-                    // if player collides with water, player speed is reduced
-                            var dir = colCheck(this, tile, false);
-                            if(dir) {
+    colCheck(obj: Entity | Tile) {
+        if (obj instanceof Tile)
+            if (obj instanceof TileZone) {
+                // check type of tile
+                if (obj instanceof TileZone) {
+                    switch (obj.type) {
+                        case "water":
+                            // if player collides with water, player speed is reduced
+                            var dir = colCheck(this, obj, false);
+                            if (dir) {
                                 this.vel.x *= 0.9;
                                 this.vel.y *= 0.9;
                             }
                             break;
                         case "barrier":
                             // if player collides with barrier, player is stopped
-                            var dir = colCheck(this, tile, true);
+                            var dir = colCheck(this, obj, true);
 
                             break;
                         default:
                             break;
                     }
+                }
+            } else {
+                let dir = colCheck(this, obj, true);
+                if (dir === "l" || dir === "r") {
+                    this.vel.x = 0;
+                } else if (dir === "b" || dir === "t") {
+                    this.vel.y = 0;
+                }
             }
-        } else {
-            let dir = colCheck(this, tile, true);
-            if (dir === "l" || dir === "r") {
-                this.vel.x = 0;
-            } else if (dir === "b" || dir === "t") {
-                this.vel.y = 0;
+        else if(obj instanceof Entity) {
+            if(colCheck(this, obj, false)) {
+                console.log(obj)
             }
         }
     }
@@ -108,14 +114,14 @@ class Player {
         if (mouse.down) {
             if (this.holding) {
                 if (this.holding instanceof Gun) {
-                    if(this.holding.gunOptions.customs.ammo > 0)
+                    if (this.holding.gunOptions.customs.ammo > 0)
                         this.holding.shoot(
                             mouse.x + camera.position.x,
                             mouse.y + camera.position.y
                         );
                     else {
                         console.log("Out of ammo");
-                        
+
                         this.holding.reload();
                     }
                 }
@@ -142,7 +148,7 @@ class Player {
         if (keys["d"]) {
             this.vel.x += this.acceleration.x;
         }
-        if(keys["r"]) {
+        if (keys["r"]) {
             if (this.holding) {
                 if (this.holding instanceof Gun) {
                     this.holding.reload();
@@ -183,12 +189,7 @@ class Player {
     dropHolding() {
         this.holding = null;
         // drop logic
-        
     }
-    handleProjectileCollision() {
-
-    }
-    delete() {
-
-    }
+    handleProjectileCollision() {}
+    delete() {}
 }

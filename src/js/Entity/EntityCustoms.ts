@@ -1,7 +1,7 @@
 class EntityCustoms {
-    health: number;
-    maxHealth: number;
-    speed: number;
+    health: number | null;
+    maxHealth: number | null;
+    speed: number | null;
 
     constructor(health: number, maxHealth: number, speed: number) {
         this.health = health;

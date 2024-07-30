@@ -5,13 +5,15 @@ class Monster extends Entity {
         this.size = size;
         this.options = options;
 
-        this.health = options.customs.maxHealth;
-
-        this.vel = new Vector(0, 0);
-        this.acceleration = new Vector(
-            options.customs.speed,
-            options.customs.speed
-        );
+        if(options.customs.health && options.customs.maxHealth && options.customs.speed) {
+            this.health = options.customs.maxHealth;
+    
+            this.vel = new Vector(0, 0);
+            this.acceleration = new Vector(
+                options.customs.speed,
+                options.customs.speed
+            );
+        }
     }
     draw() {
         // until we have a monster image, we'll use a red square

@@ -48,32 +48,38 @@ class Player {
         if (this.placingTile) {
         }
     }
-    colCheck(tile) {
-        if (tile instanceof TileZone) {
-            if (tile instanceof TileZone) {
-                switch (tile.type) {
-                    case "water":
-                        var dir = colCheck(this, tile, false);
-                        if (dir) {
-                            this.vel.x *= 0.9;
-                            this.vel.y *= 0.9;
-                        }
-                        break;
-                    case "barrier":
-                        var dir = colCheck(this, tile, true);
-                        break;
-                    default:
-                        break;
+    colCheck(obj) {
+        if (obj instanceof Tile)
+            if (obj instanceof TileZone) {
+                if (obj instanceof TileZone) {
+                    switch (obj.type) {
+                        case "water":
+                            var dir = colCheck(this, obj, false);
+                            if (dir) {
+                                this.vel.x *= 0.9;
+                                this.vel.y *= 0.9;
+                            }
+                            break;
+                        case "barrier":
+                            var dir = colCheck(this, obj, true);
+                            break;
+                        default:
+                            break;
+                    }
                 }
             }
-        }
-        else {
-            let dir = colCheck(this, tile, true);
-            if (dir === "l" || dir === "r") {
-                this.vel.x = 0;
+            else {
+                let dir = colCheck(this, obj, true);
+                if (dir === "l" || dir === "r") {
+                    this.vel.x = 0;
+                }
+                else if (dir === "b" || dir === "t") {
+                    this.vel.y = 0;
+                }
             }
-            else if (dir === "b" || dir === "t") {
-                this.vel.y = 0;
+        else if (obj instanceof Entity) {
+            if (colCheck(this, obj, false)) {
+                console.log(obj);
             }
         }
     }
@@ -150,9 +156,7 @@ class Player {
     dropHolding() {
         this.holding = null;
     }
-    handleProjectileCollision() {
-    }
-    delete() {
-    }
+    handleProjectileCollision() { }
+    delete() { }
 }
 //# sourceMappingURL=Player.js.map

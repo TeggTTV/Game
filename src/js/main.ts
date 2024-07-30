@@ -66,6 +66,16 @@ async function init() {
     droppedItems.push(
         new DroppedItem(
             new Vector(10 * tileWidth, 10 * tileHeight),
+            new Vector(30, 30),
+            {
+                imgPath: 
+            "assets/images/yellow.png",
+                customs: {
+                    health: null,
+                    maxHealth: null,
+                    speed: null,
+                }
+            },
             new Gun(
                 null,
                 "AK-47",
@@ -90,7 +100,6 @@ async function init() {
                 GunLores["AK-47"],
                 "assets/images/guns/AK-47.png"
             ),
-            "assets/images/yellow.png"
         )
     );
 
@@ -130,6 +139,7 @@ function render() {
     droppedItems.forEach((droppedItem: DroppedItem) => {
         droppedItem.draw();
         droppedItem.update();
+        player.colCheck(droppedItem);
     })
     // player drawn last
     player.draw();
