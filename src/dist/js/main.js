@@ -18,7 +18,7 @@ let map = new TileMap(60, 34);
 let camera = new Camera(new Vector(player.position.x, player.position.y), new Vector(width, height));
 let testEnemy = new Monster(new Vector(10 * tileWidth, 10 * tileHeight), new Vector(tileWidth, tileHeight), {
     imgPath: "assets/images/red.png",
-    customs: new EntityCustoms(9999, 9999),
+    customs: new EntityCustoms(20, 20, 10),
 });
 function init() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -29,12 +29,12 @@ function init() {
         tileWidth = width / tilesPerRow;
         tileHeight = height / tilesPerColumn;
         yield player.init();
-        yield map.loadMap("Other/Maps/Map1.json", "assets/images/asesprite/tileset.png");
+        yield map.loadMap("Other/Maps/Map2.json", "assets/images/asesprite/tileset.png");
         entities.push(testEnemy);
         player.equip(new Gun(player, "AK-47", GunType.FullAuto, {
             imgPath: BaseAK47.imgPath,
-            customs: new GunCustoms(1200, 1000, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
-        }, "assets/images/guns/AK-47.png"));
+            customs: new GunCustoms(1200, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
+        }, GunLores["AK-47"], "assets/images/guns/AK-47.png"));
         player.setHolding(player.items[0]);
         game = new Game();
         window.requestAnimationFrame(render);

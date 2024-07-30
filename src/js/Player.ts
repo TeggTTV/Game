@@ -75,14 +75,20 @@ class Player {
     colCheck(tile: Tile) {
         if (tile instanceof TileZone) {
             // check type of tile
-            let dir = colCheck(this, tile, false);
             if (tile instanceof TileZone) {
-                if (dir !== null)
-                    switch (tile.type) {
-                        case "water":
-                            // if player collides with water, player speed is reduced
-                            this.vel.x *= 0.9;
-                            this.vel.y *= 0.9;
+                switch (tile.type) {
+                    case "water":
+                    // if player collides with water, player speed is reduced
+                            var dir = colCheck(this, tile, false);
+                            if(dir) {
+                                this.vel.x *= 0.9;
+                                this.vel.y *= 0.9;
+                            }
+                            break;
+                        case "barrier":
+                            // if player collides with barrier, player is stopped
+                            var dir = colCheck(this, tile, true);
+
                             break;
                         default:
                             break;

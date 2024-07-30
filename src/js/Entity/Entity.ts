@@ -28,6 +28,8 @@ class Entity {
         this.health = 1;
         this.maxHealth = 100;
     }
+    draw() {}
+    update(deltaTime: number) {deltaTime++;}
     colCheck(pos: Thing) {
         let dir = colCheck(this, pos);
         if (dir === "l" || dir === "r") {

@@ -37,7 +37,7 @@ class TileMap {
             for (let j = 0; j < map.layers[i].data.length; j += map.width) {
                 tempArr.push(map.layers[i].data.slice(j, j + map.width));
             }
-            zones.push({name: map.layers[i].name, data: tempArr});
+            zones.push({ name: map.layers[i].name, data: tempArr });
         }
 
         let grassZone = zones[0];
@@ -45,9 +45,8 @@ class TileMap {
         for (let i = 0; i < grassZone.data.length; i++) {
             for (let j = 0; j < grassZone.data[i].length; j++) {
                 if (images[grassZone.data[i][j] - 1] === undefined) continue;
-                let tile = new Tile(new Vector(
-                    j * tileWidth,
-                    i * tileHeight),
+                let tile = new Tile(
+                    new Vector(j * tileWidth, i * tileHeight),
                     images[grassZone.data[i][j] - 1]
                 );
                 // if (Math.random() > 0.9)
@@ -61,8 +60,27 @@ class TileMap {
         for (let i = 0; i < waterZone.data.length; i++) {
             for (let j = 0; j < waterZone.data[i].length; j++) {
                 if (images[waterZone.data[i][j] - 1] === undefined) continue;
-                let tile = new TileZone(new Vector(j*tileWidth, i*tileHeight), images[waterZone.data[i][j] - 1]);
+                let tile = new TileZone(
+                    new Vector(j * tileWidth, i * tileHeight),
+                    images[waterZone.data[i][j] - 1]
+                );
                 tile.setType("water");
+                this.addTile(tile);
+            }
+        }
+
+        let barrierZone = zones[2];
+
+        for (let i = 0; i < barrierZone.data.length; i++) {
+            for (let j = 0; j < barrierZone.data[i].length; j++) {
+                if (barrierZone.data[i][j] - 1 < 0) continue;
+                let barrierImg = new Image();
+                barrierImg.src = "assets/images/red.png";
+                let tile = new TileZone(
+                    new Vector(j * tileWidth, i * tileHeight),
+                    barrierImg
+                );
+                tile.setType("barrier");
                 this.addTile(tile);
             }
         }

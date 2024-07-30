@@ -1,6 +1,5 @@
 class GunCustoms {
     roundsPerMinute: number = 600;
-    velocity: number = 1000;
     range: number = 100;
     inaccuracy: number = 0.01;
     damage: number = 10;
@@ -17,7 +16,6 @@ class GunCustoms {
     recoilDuration: number = 5;
     constructor(
         roundsPerMinute: number,
-        velocity: number,
         range: number,
         inaccuracy: number,
         damage: number,
@@ -34,7 +32,6 @@ class GunCustoms {
         recoilDuration: number
     ) {
         this.roundsPerMinute = roundsPerMinute;
-        this.velocity = velocity;
         this.range = range;
         this.inaccuracy = inaccuracy;
         this.damage = damage;

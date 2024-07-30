@@ -14,16 +14,15 @@ let camera: Camera = new Camera(
     new Vector(width, height)
 );
 
-// let minimap = new Minimap();
-
 let testEnemy: Monster = new Monster(
     new Vector(10 * tileWidth, 10 * tileHeight),
     new Vector(tileWidth, tileHeight),
     {
         imgPath: "assets/images/red.png",
-        customs: new EntityCustoms(9999, 9999),
+        customs: new EntityCustoms(20, 20, 10),
     }
 );
+
 
 async function init() {
     canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -37,12 +36,11 @@ async function init() {
 
     await player.init();
     await map.loadMap(
-        "Other/Maps/Map1.json",
+        "Other/Maps/Map2.json",
         "assets/images/asesprite/tileset.png"
     );
 
     entities.push(testEnemy);
-
     player.equip(
         new Gun(
             player,
@@ -50,22 +48,9 @@ async function init() {
             GunType.FullAuto,
             {
                 imgPath: BaseAK47.imgPath,
-                customs: new GunCustoms(
-                    1200,
-                    1000,
-                    100,
-                    0.01,
-                    10,
-                    0,
-                    2,
-                    30,
-                    90,
-                    false,
-                    10,
-                    1,
-                    5
-                ),
+                customs: new GunCustoms(1200, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
             },
+            GunLores["AK-47"],
             "assets/images/guns/AK-47.png"
         )
     );
@@ -91,7 +76,7 @@ function render() {
     map.draw();
 
     // draw al entities
-    entities.forEach((entity: any) => {
+    entities.forEach((entity: Entity) => {
         entity.draw();
         entity.update(deltaTime);
     });
@@ -129,10 +114,6 @@ function render() {
 
     camera.size.x = canvas.width;
     camera.size.y = canvas.height;
-
-    // lastCanvasWidth = canvas.width;
-    // lastCanvasHeight = canvas.height;
-
     // ui
     ctx.fillStyle = "black";
     ctx.font = "30px Arial";
@@ -146,7 +127,7 @@ function render() {
             10,
             60
         );
-        if(player.holding.gunOptions.customs.reloading) {
+        if (player.holding.gunOptions.customs.reloading) {
             ctx.fillStyle = "red";
             ctx.fillText("Reloading", 10, 90);
             ctx.fillStyle = "black";

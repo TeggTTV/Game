@@ -50,17 +50,21 @@ class Player {
     }
     colCheck(tile) {
         if (tile instanceof TileZone) {
-            let dir = colCheck(this, tile, false);
             if (tile instanceof TileZone) {
-                if (dir !== null)
-                    switch (tile.type) {
-                        case "water":
+                switch (tile.type) {
+                    case "water":
+                        var dir = colCheck(this, tile, false);
+                        if (dir) {
                             this.vel.x *= 0.9;
                             this.vel.y *= 0.9;
-                            break;
-                        default:
-                            break;
-                    }
+                        }
+                        break;
+                    case "barrier":
+                        var dir = colCheck(this, tile, true);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
         else {

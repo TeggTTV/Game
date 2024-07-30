@@ -11,6 +11,8 @@ class Entity {
         this.health = 1;
         this.maxHealth = 100;
     }
+    draw() { }
+    update(deltaTime) { deltaTime++; }
     colCheck(pos) {
         let dir = colCheck(this, pos);
         if (dir === "l" || dir === "r") {

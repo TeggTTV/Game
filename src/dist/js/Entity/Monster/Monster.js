@@ -7,7 +7,7 @@ class Monster extends Entity {
         this.options = options;
         this.health = options.customs.maxHealth;
         this.vel = new Vector(0, 0);
-        this.acceleration = new Vector(4, 4);
+        this.acceleration = new Vector(options.customs.speed, options.customs.speed);
     }
     draw() {
         ctx.fillStyle = "red";
@@ -19,6 +19,11 @@ class Monster extends Entity {
         if (this.health <= 0) {
             this.delete();
         }
+        this.pathfind(player.position);
+    }
+    pathfind(location) {
+        let direction = new Vector(location.x - this.position.x, location.y - this.position.y).normalize();
+        this.vel = this.vel.add(Vector.mul(direction, this.acceleration));
     }
 }
 //# sourceMappingURL=Monster.js.map

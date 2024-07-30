@@ -1,8 +1,7 @@
 "use strict";
 class GunCustoms {
-    constructor(roundsPerMinute, velocity, range, inaccuracy, damage, penetration, reloadTime, magazineSize, reserveAmmo, reloading, recoilPower, recoilSpeed, recoilDuration) {
+    constructor(roundsPerMinute, range, inaccuracy, damage, penetration, reloadTime, magazineSize, reserveAmmo, reloading, recoilPower, recoilSpeed, recoilDuration) {
         this.roundsPerMinute = 600;
-        this.velocity = 1000;
         this.range = 100;
         this.inaccuracy = 0.01;
         this.damage = 10;
@@ -16,7 +15,6 @@ class GunCustoms {
         this.recoilSpeed = 1;
         this.recoilDuration = 5;
         this.roundsPerMinute = roundsPerMinute;
-        this.velocity = velocity;
         this.range = range;
         this.inaccuracy = inaccuracy;
         this.damage = damage;

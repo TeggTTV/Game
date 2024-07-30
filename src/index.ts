@@ -41,7 +41,7 @@ class Main {
             this.fullscreen();
         });
     }
-
+    
     createWindow = () => {
         this.mainWindow = new BrowserWindow({
             // width: 640,

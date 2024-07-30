@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 class Gun extends Item {
-    constructor(owner, name, gunType, gunOptions, imgPath) {
+    constructor(owner, name, gunType, gunOptions, gunLore, imgPath) {
         super(owner, name, imgPath);
         this.shotFirstBullet = false;
         this.name = name;
@@ -18,6 +18,7 @@ class Gun extends Item {
             imgPath: gunOptions.imgPath,
             customs: gunOptions.customs,
         };
+        this.gunLore = gunLore;
         this.shotFirstBullet = false;
         this.firing = false;
         this.fireTimer = 0;
@@ -124,7 +125,7 @@ class Gun extends Item {
             else {
                 direction = direction.normalize();
             }
-            let bullet = new Bullet(this.owner, 10, this.gunOptions.customs.velocity, direction, this.tipOfGun, 5, "assets/images/bullet.png");
+            let bullet = new Bullet(this.owner, 10, 1000, direction, this.tipOfGun, 5, "assets/images/bullet.png");
             if (!this.shotFirstBullet && !this.firing) {
                 projectiles.push(bullet);
                 this.gunOptions.customs.ammo--;

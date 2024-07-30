@@ -8,7 +8,10 @@ class Monster extends Entity {
         this.health = options.customs.maxHealth;
 
         this.vel = new Vector(0, 0);
-        this.acceleration = new Vector(4, 4);
+        this.acceleration = new Vector(
+            options.customs.speed,
+            options.customs.speed
+        );
     }
     draw() {
         // until we have a monster image, we'll use a red square
@@ -27,5 +30,14 @@ class Monster extends Entity {
         if (this.health <= 0) {
             this.delete();
         }
+
+        this.pathfind(player.position);
+    }
+    pathfind(location: Vector) {
+        let direction = new Vector(
+            location.x - this.position.x,
+            location.y - this.position.y
+        ).normalize();
+        this.vel = this.vel.add(Vector.mul(direction, this.acceleration));
     }
 }

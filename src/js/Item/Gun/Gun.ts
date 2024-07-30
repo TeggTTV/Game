@@ -9,6 +9,25 @@ class Gun extends Item {
 
     gunOptions: GunOptions;
 
+    gunLore: {
+        name: string;
+        type: string;
+        lore: string;
+        history: string;
+        notableUsers: Array<string>;
+        variations: {
+            model: string;
+            description: string;
+        }
+        caliber: string;
+        action: string;
+        magazine: string;
+        barrelLength: string;
+        weight: string;
+        effectiveRange: string;
+        maxRange: string;
+    }
+
     shotFirstBullet: boolean = false;
     firing: boolean;
 
@@ -25,6 +44,7 @@ class Gun extends Item {
             imgPath: string;
             customs: GunCustoms;
         },
+        gunLore: any,
         imgPath: string
     ) {
         super(owner, name, imgPath);
@@ -35,6 +55,8 @@ class Gun extends Item {
             imgPath: gunOptions.imgPath,
             customs: gunOptions.customs,
         };
+
+        this.gunLore = gunLore;
 
         this.shotFirstBullet = false;
         this.firing = false;
@@ -192,7 +214,7 @@ class Gun extends Item {
         let bullet = new Bullet(
             this.owner,
             10,
-            this.gunOptions.customs.velocity,
+            1000,
             direction,
             this.tipOfGun,
             5,
