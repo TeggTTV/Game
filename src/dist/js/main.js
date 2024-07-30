@@ -13,7 +13,14 @@ let ctx;
 let game;
 let res = { width: 0, height: 0 };
 let imgLoad = new ImageLoader();
-let player = new Player(new Vector(5 * tileWidth, 5 * tileHeight));
+let player = new Player(new Vector(5 * tileWidth, 5 * tileHeight), {
+    imgPath: "assets/images/blue.png",
+    customs: {
+        health: 100,
+        maxHealth: 100,
+        speed: 4,
+    }
+});
 let map = new TileMap(60, 34);
 let camera = new Camera(new Vector(player.position.x, player.position.y), new Vector(width, height));
 let testEnemy = new Monster(new Vector(10 * tileWidth, 10 * tileHeight), new Vector(tileWidth, tileHeight), {
@@ -29,13 +36,17 @@ function init() {
         tileWidth = width / tilesPerRow;
         tileHeight = height / tilesPerColumn;
         yield player.init();
-        yield map.loadMap("Other/Maps/Map2.json", "assets/images/asesprite/tileset.png");
+        yield map.loadMap("Other/Maps/Map1.json", "assets/images/asesprite/tileset.png");
         entities.push(testEnemy);
         player.equip(new Gun(player, "AK-47", GunType.FullAuto, {
             imgPath: BaseAK47.imgPath,
             customs: new GunCustoms(1200, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
         }, GunLores["AK-47"], "assets/images/guns/AK-47.png"));
         player.setHolding(player.items[0]);
+        droppedItems.push(new DroppedItem(new Vector(10 * tileWidth, 10 * tileHeight), new Gun(null, "AK-47", GunType.FullAuto, {
+            imgPath: BaseAK47.imgPath,
+            customs: new GunCustoms(1200, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
+        }, GunLores["AK-47"], "assets/images/guns/AK-47.png"), "assets/images/yellow.png"));
         game = new Game();
         window.requestAnimationFrame(render);
     });
@@ -60,6 +71,10 @@ function render() {
     damageTexts.forEach((damageText) => {
         damageText.draw();
         damageText.update(deltaTime);
+    });
+    droppedItems.forEach((droppedItem) => {
+        droppedItem.draw();
+        droppedItem.update();
     });
     player.draw();
     player.update(deltaTime);

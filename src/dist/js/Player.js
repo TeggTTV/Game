@@ -9,21 +9,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 class Player {
-    constructor(position) {
+    constructor(position, options) {
         this.position = position;
-        this.width = tileWidth;
-        this.height = tileHeight;
+        this.size = new Vector(tileWidth, tileHeight);
         this.imgLoader = new ImageLoader();
-        this.img = new Image();
+        this.image = new Image();
         this.maxSpeed = 4;
         this.vel = new Vector(0, 0);
         this.acceleration = new Vector(height * 0.05, height * 0.05);
         this.items = [];
-        this.holding = undefined;
+        this.holding = null;
         this.tilePlacement = new TilePlacement();
         this.placingTile = false;
         this.health = 100;
         this.maxHealth = 100;
+        this.options = options;
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -148,7 +148,11 @@ class Player {
         this.holding = item;
     }
     dropHolding() {
-        this.holding = undefined;
+        this.holding = null;
+    }
+    handleProjectileCollision() {
+    }
+    delete() {
     }
 }
 //# sourceMappingURL=Player.js.map

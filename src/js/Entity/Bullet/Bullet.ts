@@ -1,5 +1,5 @@
 class Bullet {
-    owner: Player;
+    owner: Entity;
     damage: number;
     speed: number;
     direction: Vector;
@@ -8,7 +8,7 @@ class Bullet {
     imgPath: string;
     img: HTMLImageElement;
     constructor(
-        owner: Player,
+        owner: Entity,
         damage: number,
         speed: number,
         direction: Vector,

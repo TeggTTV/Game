@@ -30,6 +30,7 @@ const zonesVisible: boolean = false;
 const entities: any = [];
 const projectiles: any = [];
 const damageTexts: any = [];
+const droppedItems: any = [];
 
 // let resolutions: any = [];
 // let resolut 

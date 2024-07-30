@@ -1,10 +1,9 @@
 class Player {
     position: Vector;
-    width: number;
-    height: number;
+    size: Vector
 
     imgLoader: ImageLoader;
-    img: CanvasImageSource;
+    image: CanvasImageSource;
 
     maxSpeed: number;
 
@@ -13,7 +12,7 @@ class Player {
     acceleration: Vector;
 
     items: Item[];
-    holding: Item | Gun | undefined;
+    holding: Item | Gun | null;
 
     tilePlacement: TilePlacement;
     placingTile: boolean;
@@ -21,16 +20,17 @@ class Player {
     health: number;
     maxHealth: number;
 
-    constructor(position: Vector) {
+    options: EntityOptions;
+
+    constructor(position: Vector, options: EntityOptions) {
         this.position = position;
 
-        this.width = tileWidth;
-        this.height = tileHeight;
+        this.size = new Vector(tileWidth, tileHeight);
         // this.locationPerecentX = this.x / width;
         // this.locationPerecentY = this.y / height;
 
         this.imgLoader = new ImageLoader();
-        this.img = new Image();
+        this.image = new Image();
 
         this.maxSpeed = 4;
 
@@ -39,7 +39,7 @@ class Player {
         this.acceleration = new Vector(height * 0.05, height * 0.05);
 
         this.items = [];
-        this.holding = undefined;
+        this.holding = null;
 
         this.tilePlacement = new TilePlacement();
         this.placingTile = false;
@@ -47,6 +47,7 @@ class Player {
         this.health = 100;
         this.maxHealth = 100;
 
+        this.options = options;
     }
     async init() {
         await this.imgLoader.loadImage("Player", "assets/images/red.png");
@@ -180,7 +181,14 @@ class Player {
         this.holding = item;
     }
     dropHolding() {
-        this.holding = undefined;
+        this.holding = null;
         // drop logic
+        
+    }
+    handleProjectileCollision() {
+
+    }
+    delete() {
+
     }
 }

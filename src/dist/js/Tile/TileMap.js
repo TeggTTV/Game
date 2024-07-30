@@ -52,18 +52,6 @@ class TileMap {
                     this.addTile(tile);
                 }
             }
-            let barrierZone = zones[2];
-            for (let i = 0; i < barrierZone.data.length; i++) {
-                for (let j = 0; j < barrierZone.data[i].length; j++) {
-                    if (barrierZone.data[i][j] - 1 < 0)
-                        continue;
-                    let barrierImg = new Image();
-                    barrierImg.src = "assets/images/red.png";
-                    let tile = new TileZone(new Vector(j * tileWidth, i * tileHeight), barrierImg);
-                    tile.setType("barrier");
-                    this.addTile(tile);
-                }
-            }
         });
     }
 }

@@ -1,10 +1,10 @@
 class Item {
-    owner: Player;
+    owner: Entity | null;
     name: string;
     imgLoader: ImageLoader;
     img: any;
 
-    constructor(owner: Player, name: string, imgPath: string) {
+    constructor(owner: Entity | null, name: string, imgPath: string) {
         this.owner = owner;
         this.name = name;
         this.imgLoader = new ImageLoader();

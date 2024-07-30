@@ -14,6 +14,8 @@ class Entity {
     health: number;
     maxHealth: number;
 
+    holding: Item | null = null;
+
     constructor(position: Vector, size: Vector, options: EntityOptions) {
         this.position = position;
         this.size = size;

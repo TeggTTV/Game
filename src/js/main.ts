@@ -6,7 +6,14 @@ let game: Game;
 let res = { width: 0, height: 0 };
 
 let imgLoad: ImageLoader = new ImageLoader();
-let player: Player = new Player(new Vector(5 * tileWidth, 5 * tileHeight));
+let player: Player = new Player(new Vector(5 * tileWidth, 5 * tileHeight), {
+    imgPath: "assets/images/blue.png",
+    customs: {
+        health: 100,
+        maxHealth: 100,
+        speed: 4,
+    }
+});
 let map: TileMap = new TileMap(60, 34);
 
 let camera: Camera = new Camera(
@@ -36,7 +43,7 @@ async function init() {
 
     await player.init();
     await map.loadMap(
-        "Other/Maps/Map2.json",
+        "Other/Maps/Map1.json",
         "assets/images/asesprite/tileset.png"
     );
 
@@ -55,6 +62,37 @@ async function init() {
         )
     );
     player.setHolding(player.items[0]);
+
+    droppedItems.push(
+        new DroppedItem(
+            new Vector(10 * tileWidth, 10 * tileHeight),
+            new Gun(
+                null,
+                "AK-47",
+                GunType.FullAuto,
+                {
+                    imgPath: BaseAK47.imgPath,
+                    customs: new GunCustoms(
+                        1200,
+                        100,
+                        0.01,
+                        10,
+                        0,
+                        2,
+                        30,
+                        90,
+                        false,
+                        10,
+                        1,
+                        5
+                    ),
+                },
+                GunLores["AK-47"],
+                "assets/images/guns/AK-47.png"
+            ),
+            "assets/images/yellow.png"
+        )
+    );
 
     game = new Game();
 
@@ -89,6 +127,10 @@ function render() {
         damageText.draw();
         damageText.update(deltaTime);
     });
+    droppedItems.forEach((droppedItem: DroppedItem) => {
+        droppedItem.draw();
+        droppedItem.update();
+    })
     // player drawn last
     player.draw();
     player.update(deltaTime);

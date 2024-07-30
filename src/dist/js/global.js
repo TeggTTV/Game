@@ -26,6 +26,7 @@ const zonesVisible = false;
 const entities = [];
 const projectiles = [];
 const damageTexts = [];
+const droppedItems = [];
 function resize() {
     tileWidth = width / tilesPerRow;
     tileHeight = height / tilesPerColumn;

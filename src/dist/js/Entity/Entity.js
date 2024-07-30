@@ -1,6 +1,7 @@
 "use strict";
 class Entity {
     constructor(position, size, options) {
+        this.holding = null;
         this.position = position;
         this.size = size;
         this.options = options;
