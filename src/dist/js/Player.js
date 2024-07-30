@@ -17,13 +17,17 @@ class Player {
         this.maxSpeed = 4;
         this.vel = new Vector(0, 0);
         this.acceleration = new Vector(height * 0.05, height * 0.05);
-        this.items = [];
         this.holding = null;
         this.tilePlacement = new TilePlacement();
         this.placingTile = false;
         this.health = 100;
         this.maxHealth = 100;
         this.options = options;
+        this.hovering = null;
+        this.inventory = new Inventory({
+            maxSize: 50,
+            size: 20,
+        });
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -31,7 +35,7 @@ class Player {
         });
     }
     equip(item) {
-        this.items.push(item);
+        this.inventory.add(item);
     }
     draw() {
         ctx.fillStyle = "black";
@@ -45,11 +49,9 @@ class Player {
         this.checkMouse();
         this.vel = this.vel.mul(0.9);
         this.position = this.position.add(this.vel.mul(deltaTime));
-        if (this.placingTile) {
-        }
     }
     colCheck(obj) {
-        if (obj instanceof Tile)
+        if (obj instanceof Tile) {
             if (obj instanceof TileZone) {
                 if (obj instanceof TileZone) {
                     switch (obj.type) {
@@ -77,9 +79,20 @@ class Player {
                     this.vel.y = 0;
                 }
             }
+        }
         else if (obj instanceof Entity) {
-            if (colCheck(this, obj, false)) {
-                console.log(obj);
+            if (obj instanceof DroppedItem) {
+                if (colCheck(this, obj, false)) {
+                    if (obj.itemData instanceof Gun) {
+                        let keyHoverHint = new PickupHint(obj, ["F to Pickup " + obj.itemData.gunLore.name], 20);
+                        keyHoverHint.draw();
+                        this.hovering = obj;
+                    }
+                }
+                else {
+                    if (!this.hovering)
+                        this.hovering = null;
+                }
             }
         }
     }
@@ -106,6 +119,26 @@ class Player {
         }
     }
     checkKeys() {
+        if (keys["0"]) {
+        }
+        if (keys["1"]) {
+        }
+        if (keys["2"]) {
+        }
+        if (keys["3"]) {
+        }
+        if (keys["4"]) {
+        }
+        if (keys["5"]) {
+        }
+        if (keys["6"]) {
+        }
+        if (keys["7"]) {
+        }
+        if (keys["8"]) {
+        }
+        if (keys["9"]) {
+        }
         if (keys["w"]) {
             this.vel.y -= this.acceleration.y;
         }
@@ -117,6 +150,15 @@ class Player {
         }
         if (keys["d"]) {
             this.vel.x += this.acceleration.x;
+        }
+        if (keys["f"]) {
+            if (this.hovering instanceof DroppedItem) {
+                let item = this.hovering.itemData;
+                this.inventory.add(item);
+                item.owner = this;
+                this.hovering.delete();
+                this.hovering = null;
+            }
         }
         if (keys["r"]) {
             if (this.holding) {
@@ -135,17 +177,8 @@ class Player {
     resizeEvent(ratio) {
         this.position = Vector.mul(this.position, ratio);
     }
-    addItemToInventory(item) {
-        this.items.push(item);
-    }
-    removeItemFromInventory(item) {
-        let index = this.items.indexOf(item);
-        if (index > -1) {
-            this.items.splice(index, 1);
-        }
-    }
     getItems() {
-        return this.items;
+        return this.inventory.getItems();
     }
     getHolding() {
         return this.holding;

@@ -1,14 +1,15 @@
 type Thing = {
-    position: Vector
+    position: Vector,
+    size: Vector
 };
 
 function colCheck(shapeA: Thing, shapeB: Thing, moveShapeA = true) {
     // get the vectors to check against
-    var vX = shapeA.position.x + tileWidth / 2 - (shapeB.position.x + tileWidth / 2),
-        vY = shapeA.position.y + tileHeight / 2 - (shapeB.position.y + tileHeight / 2),
+    var vX = shapeA.position.x + shapeA.size.x / 2 - (shapeB.position.x + shapeB.size.x / 2),
+        vY = shapeA.position.y + shapeA.size.y / 2 - (shapeB.position.y + shapeB.size.y / 2),
         // add the half widths and half heights of the objects
-        hWidths = tileWidth / 2 + tileWidth / 2,
-        hHeights = tileHeight / 2 + tileHeight / 2,
+        hWidths =  shapeA.size.x / 2 + shapeB.size.x / 2,
+        hHeights = shapeA.size.y / 2 + shapeB.size.y / 2,
         colDir = null;
 
     // if the x and y vector are less than the half width or half height, they we must be inside the object, causing a collision

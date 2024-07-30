@@ -9,8 +9,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 class Gun extends Item {
-    constructor(owner, name, gunType, gunOptions, gunLore, imgPath) {
-        super(owner, name, imgPath);
+    constructor(owner, name, gunType, gunOptions, gunLore) {
+        super(owner, name);
         this.shotFirstBullet = false;
         this.name = name;
         this.type = gunType;
@@ -58,14 +58,18 @@ class Gun extends Item {
             this.gunOptions.customs.reserveAmmo === 0)
             return;
         this.gunOptions.customs.reloading = true;
-        if (this.gunOptions.customs.ammo < this.gunOptions.customs.magazineSize) {
+        if (this.gunOptions.customs.ammo <
+            this.gunOptions.customs.magazineSize ||
+            (this.gunOptions.customs.ammo ===
+                this.gunOptions.customs.magazineSize &&
+                this.gunOptions.customs.reserveAmmo > 0)) {
             new Timer(0, this.gunOptions.customs.reloadTime, 1, true, () => {
             }, () => {
                 var _a;
                 if (((_a = this.owner) === null || _a === void 0 ? void 0 : _a.holding) instanceof Gun) {
                     let neededAmmo = this.gunOptions.customs.magazineSize -
                         this.gunOptions.customs.ammo;
-                    if (this.gunOptions.customs.reserveAmmo >= neededAmmo) {
+                    if (this.gunOptions.customs.reserveAmmo > neededAmmo) {
                         if (this.gunOptions.customs.ammo >= 1) {
                             this.gunOptions.customs.ammo += neededAmmo + 1;
                             this.gunOptions.customs.reserveAmmo -=
@@ -76,6 +80,16 @@ class Gun extends Item {
                             this.gunOptions.customs.reserveAmmo -=
                                 neededAmmo;
                         }
+                    }
+                    else if (this.gunOptions.customs.ammo ===
+                        this.gunOptions.customs.magazineSize &&
+                        this.gunOptions.customs.reserveAmmo > 0) {
+                        this.gunOptions.customs.ammo++;
+                        this.gunOptions.customs.reserveAmmo--;
+                    }
+                    else if (this.gunOptions.customs.reserveAmmo === neededAmmo) {
+                        this.gunOptions.customs.ammo += neededAmmo;
+                        this.gunOptions.customs.reserveAmmo -= neededAmmo;
                     }
                     else {
                         this.gunOptions.customs.ammo +=
@@ -121,6 +135,8 @@ class Gun extends Item {
     }
     shoot(mouseX, mouseY) {
         return __awaiter(this, void 0, void 0, function* () {
+            if (this.gunOptions.customs.reloading)
+                return;
             if (this.owner instanceof Player || this.owner instanceof Entity) {
                 let roundsPerMillsec = 1 / (this.gunOptions.customs.roundsPerMinute / 60);
                 let direction = new Vector(mouseX - this.owner.position.x - this.owner.size.x / 2, mouseY - this.owner.position.y - this.owner.size.y / 2);

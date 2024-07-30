@@ -1,11 +1,9 @@
-class HoverHint {
-    descriptionArr: string[];
-    descriptions: { text: string; width: number; height: number }[];
-    size: number;
+class HoverHint extends Hint {
     delay: number;
     canDraw: boolean;
     timerStarted: boolean;
     constructor(descriptionArr: string[], size: number, delay: number = 0) {
+        super(descriptionArr, size);
         this.descriptionArr = descriptionArr;
         this.descriptions = [];
         for (let i = 0; i < descriptionArr.length; i++) {

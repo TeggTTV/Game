@@ -11,7 +11,6 @@ class Player {
 
     acceleration: Vector;
 
-    items: Item[];
     holding: Item | Gun | null;
 
     tilePlacement: TilePlacement;
@@ -21,6 +20,10 @@ class Player {
     maxHealth: number;
 
     options: EntityOptions;
+
+    hovering: DroppedItem | null;
+
+    inventory: Inventory;
 
     constructor(position: Vector, options: EntityOptions) {
         this.position = position;
@@ -38,7 +41,6 @@ class Player {
 
         this.acceleration = new Vector(height * 0.05, height * 0.05);
 
-        this.items = [];
         this.holding = null;
 
         this.tilePlacement = new TilePlacement();
@@ -48,13 +50,21 @@ class Player {
         this.maxHealth = 100;
 
         this.options = options;
+
+        this.hovering = null;
+
+        this.inventory = new Inventory({
+            maxSize: 50,
+            size: 20,
+        });
+
     }
     async init() {
         await this.imgLoader.loadImage("Player", "assets/images/red.png");
         // this.img = this.imgLoader.getImage("Player");
     }
     equip(item: Item) {
-        this.items.push(item);
+        this.inventory.add(item);
     }
     draw() {
         // ctx.drawImage(this.img, this.x, this.y, tileWidth, tileHeight);
@@ -70,11 +80,12 @@ class Player {
         this.vel = this.vel.mul(0.9);
         this.position = this.position.add(this.vel.mul(deltaTime));
 
-        if (this.placingTile) {
-        }
+        // if (this.placingTile) {
+        // }
+
     }
     colCheck(obj: Entity | Tile) {
-        if (obj instanceof Tile)
+        if (obj instanceof Tile) {
             if (obj instanceof TileZone) {
                 // check type of tile
                 if (obj instanceof TileZone) {
@@ -104,11 +115,21 @@ class Player {
                     this.vel.y = 0;
                 }
             }
-        else if(obj instanceof Entity) {
-            if(colCheck(this, obj, false)) {
-                console.log(obj)
+        } else if (obj instanceof Entity) {
+            if (obj instanceof DroppedItem) {
+                if (colCheck(this, obj, false)) {
+                    if(obj.itemData instanceof Gun) {
+                        let keyHoverHint = new PickupHint(obj, ["F to Pickup " + obj.itemData.gunLore.name], 20);
+                        keyHoverHint.draw();
+                        this.hovering = obj;                    
+                    }
+                } else {
+                    if(!this.hovering)
+                        this.hovering = null;
+                }
+                
             }
-        }
+        } 
     }
     checkMouse() {
         if (mouse.down) {
@@ -136,6 +157,28 @@ class Player {
         }
     }
     checkKeys() {
+        if (keys["0"]) {
+            
+        }
+        if (keys["1"]) {
+        }
+        if (keys["2"]) {
+        }
+        if (keys["3"]) {
+        }
+        if (keys["4"]) {
+        }
+        if (keys["5"]) {
+        }
+        if (keys["6"]) {
+        }
+        if (keys["7"]) {
+        }
+        if (keys["8"]) {
+        }
+        if (keys["9"]) {
+        }
+
         if (keys["w"]) {
             this.vel.y -= this.acceleration.y;
         }
@@ -148,6 +191,18 @@ class Player {
         if (keys["d"]) {
             this.vel.x += this.acceleration.x;
         }
+
+        if (keys["f"]) {
+            if (this.hovering instanceof DroppedItem) {
+                let item = this.hovering.itemData;
+                this.inventory.add(item);
+                item.owner = this;
+
+                this.hovering.delete();
+                this.hovering = null;
+            }
+        }
+
         if (keys["r"]) {
             if (this.holding) {
                 if (this.holding instanceof Gun) {
@@ -168,17 +223,8 @@ class Player {
         // this.y = this.locationPerecentY * map.sizeY * tileHeight;
         this.position = Vector.mul(this.position, ratio);
     }
-    addItemToInventory(item: Item) {
-        this.items.push(item);
-    }
-    removeItemFromInventory(item: Item) {
-        let index = this.items.indexOf(item);
-        if (index > -1) {
-            this.items.splice(index, 1);
-        }
-    }
     getItems() {
-        return this.items;
+        return this.inventory.getItems();
     }
     getHolding() {
         return this.holding;

@@ -5,9 +5,13 @@ class Monster extends Entity {
         this.size = size;
         this.options = options;
 
-        if(options.customs.health && options.customs.maxHealth && options.customs.speed) {
+        if (
+            options.customs.health &&
+            options.customs.maxHealth &&
+            options.customs.speed
+        ) {
             this.health = options.customs.maxHealth;
-    
+
             this.vel = new Vector(0, 0);
             this.acceleration = new Vector(
                 options.customs.speed,
@@ -15,7 +19,7 @@ class Monster extends Entity {
             );
         }
     }
-    draw() {
+    draw(): void {
         // until we have a monster image, we'll use a red square
         ctx.fillStyle = "red";
         ctx.fillRect(
@@ -25,21 +29,58 @@ class Monster extends Entity {
             this.size.y
         );
     }
-    update(deltaTime: number) {
+    update(deltaTime: number): void {
         this.vel = this.vel.mul(0.9);
         this.position = this.position.add(this.vel.mul(deltaTime));
 
         if (this.health <= 0) {
+            this.checkDrops();
             this.delete();
         }
 
         this.pathfind(player.position);
     }
-    pathfind(location: Vector) {
+    pathfind(location: Vector): void {
         let direction = new Vector(
             location.x - this.position.x,
             location.y - this.position.y
         ).normalize();
         this.vel = this.vel.add(Vector.mul(direction, this.acceleration));
+    }
+    drop(item: Item): void {
+        let newDroppedItem = new DroppedItem(
+            new Vector(
+                this.position.x + this.size.x / 2 - 15,
+                this.position.y + this.size.y / 2 - 15
+            ),
+            new Vector(30, 30),
+            {
+                customs: {
+                    health: 0,
+                    maxHealth: 0,
+                    speed: 0,
+                },
+                drops: null,
+                imgPath: "assets/images/yellow.png",
+            },
+            item
+        );
+        droppedItems.push(newDroppedItem);
+    }
+    checkDrops() {
+        if (this.options.drops) {
+            if (this.options.drops.possibleDrops.length === 1) {
+                this.drop(this.options.drops.possibleDrops[0].item);
+                return;
+            }
+            for (let drop of this.options.drops.possibleDrops) {
+                let random = Math.random() * drop.chance;
+                console.log(random);
+            }
+        }
+    }
+    delete(): void {
+        let index = entities.indexOf(this);
+        entities.splice(index, 1);
     }
 }

@@ -19,13 +19,23 @@ let player = new Player(new Vector(5 * tileWidth, 5 * tileHeight), {
         health: 100,
         maxHealth: 100,
         speed: 4,
-    }
+    },
+    drops: null,
 });
 let map = new TileMap(60, 34);
 let camera = new Camera(new Vector(player.position.x, player.position.y), new Vector(width, height));
 let testEnemy = new Monster(new Vector(10 * tileWidth, 10 * tileHeight), new Vector(tileWidth, tileHeight), {
     imgPath: "assets/images/red.png",
     customs: new EntityCustoms(20, 20, 10),
+    drops: new EntityDrops([
+        {
+            chance: 1,
+            item: new Gun(null, "AK-47", GunType.FullAuto, {
+                imgPath: BaseAK47.imgPath,
+                customs: new GunCustoms(1200, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
+            }, GunLores["AK-47"]),
+        },
+    ]),
 });
 function init() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -41,19 +51,20 @@ function init() {
         player.equip(new Gun(player, "AK-47", GunType.FullAuto, {
             imgPath: BaseAK47.imgPath,
             customs: new GunCustoms(1200, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
-        }, GunLores["AK-47"], "assets/images/guns/AK-47.png"));
-        player.setHolding(player.items[0]);
-        droppedItems.push(new DroppedItem(new Vector(10 * tileWidth, 10 * tileHeight), new Vector(30, 30), {
+        }, GunLores["AK-47"]));
+        player.setHolding(player.inventory.getItems()[0]);
+        droppedItems.push(new DroppedItem(new Vector(10 * tileWidth, 7 * tileHeight), new Vector(30, 30), {
             imgPath: "assets/images/yellow.png",
             customs: {
                 health: null,
                 maxHealth: null,
                 speed: null,
-            }
-        }, new Gun(null, "AK-47", GunType.FullAuto, {
+            },
+            drops: null,
+        }, new Gun(null, "M9", GunType.SemiAuto, {
             imgPath: BaseAK47.imgPath,
-            customs: new GunCustoms(1200, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
-        }, GunLores["AK-47"], "assets/images/guns/AK-47.png")));
+            customs: new GunCustoms(1, 100, 0.01, 10, 0, 2, 9, 40, false, 10, 1, 5),
+        }, GunLores["Beretta M9"])));
         game = new Game();
         window.requestAnimationFrame(render);
     });
@@ -67,6 +78,11 @@ function render() {
     ctx.save();
     ctx.translate(-camera.position.x, -camera.position.y);
     map.draw();
+    droppedItems.forEach((droppedItem) => {
+        droppedItem.draw();
+        droppedItem.update();
+        player.colCheck(droppedItem);
+    });
     entities.forEach((entity) => {
         entity.draw();
         entity.update(deltaTime);
@@ -79,10 +95,8 @@ function render() {
         damageText.draw();
         damageText.update(deltaTime);
     });
-    droppedItems.forEach((droppedItem) => {
-        droppedItem.draw();
-        droppedItem.update();
-        player.colCheck(droppedItem);
+    hoverHints.forEach((hoverHint) => {
+        hoverHint.draw();
     });
     player.draw();
     player.update(deltaTime);
@@ -105,7 +119,7 @@ function render() {
         ctx.fillText("Ammo: " +
             player.holding.gunOptions.customs.ammo +
             "/" +
-            player.holding.gunOptions.customs.reserveAmmo, 10, 60);
+            player.holding.gunOptions.customs.reserveAmmo + " / caliber=" + player.holding.gunLore.caliber, 10, 60);
         if (player.holding.gunOptions.customs.reloading) {
             ctx.fillStyle = "red";
             ctx.fillText("Reloading", 10, 90);

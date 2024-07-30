@@ -6,6 +6,9 @@ class Tile {
     hovering: boolean;
     immovable: boolean;
     barrier: boolean;
+
+    size: Vector;
+
     constructor(position: Vector, img: CanvasImageSource) {
         this.position = position;
         this.img = img;
@@ -15,6 +18,9 @@ class Tile {
         this.immovable = false;
 
         this.barrier = false;
+
+        this.size = new Vector(tileWidth, tileHeight);
+
     }
     setBarrier(barrier: boolean) {
         this.barrier = barrier;

@@ -15,9 +15,14 @@ class DroppedItem extends Entity {
         this.img.src = options.imgPath;
     }
     draw() {
+        ctx.strokeRect(this.position.x, this.position.y, this.size.x, this.size.y)
         ctx.drawImage(this.img, this.position.x, this.position.y, this.size.x, this.size.y);
     }
     update() {
 
+    }
+    delete(): void {
+        let index = droppedItems.indexOf(this);
+        droppedItems.splice(index, 1);
     }
 }

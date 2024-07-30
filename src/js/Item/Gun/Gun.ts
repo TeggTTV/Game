@@ -45,9 +45,8 @@ class Gun extends Item {
             customs: GunCustoms;
         },
         gunLore: any,
-        imgPath: string
     ) {
-        super(owner, name, imgPath);
+        super(owner, name);
         this.name = name;
         this.type = gunType;
 
@@ -111,7 +110,11 @@ class Gun extends Item {
         this.gunOptions.customs.reloading = true;
 
         if (
-            this.gunOptions.customs.ammo < this.gunOptions.customs.magazineSize
+            this.gunOptions.customs.ammo <
+                this.gunOptions.customs.magazineSize ||
+            (this.gunOptions.customs.ammo ===
+                this.gunOptions.customs.magazineSize &&
+                this.gunOptions.customs.reserveAmmo > 0)
         ) {
             new Timer(
                 0,
@@ -127,7 +130,7 @@ class Gun extends Item {
                             this.gunOptions.customs.magazineSize -
                             this.gunOptions.customs.ammo;
 
-                        if (this.gunOptions.customs.reserveAmmo >= neededAmmo) {
+                        if (this.gunOptions.customs.reserveAmmo > neededAmmo) {
                             if (this.gunOptions.customs.ammo >= 1) {
                                 this.gunOptions.customs.ammo += neededAmmo + 1;
                                 this.gunOptions.customs.reserveAmmo -=
@@ -136,7 +139,19 @@ class Gun extends Item {
                                 this.gunOptions.customs.ammo += neededAmmo;
                                 this.gunOptions.customs.reserveAmmo -=
                                     neededAmmo;
-                            }
+                            } // 27 / 3
+                        } else if (
+                            this.gunOptions.customs.ammo ===
+                                this.gunOptions.customs.magazineSize &&
+                            this.gunOptions.customs.reserveAmmo > 0
+                        ) {
+                            this.gunOptions.customs.ammo++;
+                            this.gunOptions.customs.reserveAmmo--;
+                        } else if (
+                            this.gunOptions.customs.reserveAmmo === neededAmmo
+                        ) {
+                            this.gunOptions.customs.ammo += neededAmmo;
+                            this.gunOptions.customs.reserveAmmo -= neededAmmo;
                         } else {
                             this.gunOptions.customs.ammo +=
                                 this.gunOptions.customs.reserveAmmo;
@@ -200,16 +215,16 @@ class Gun extends Item {
         return new Vector(Math.cos(newAngle), Math.sin(newAngle));
     }
     async shoot(mouseX: number, mouseY: number) {
-        if(this.owner instanceof Player || this.owner instanceof Entity) {
-            
+        if(this.gunOptions.customs.reloading) return;
+        if (this.owner instanceof Player || this.owner instanceof Entity) {
             let roundsPerMillsec =
                 1 / (this.gunOptions.customs.roundsPerMinute / 60);
-    
+
             let direction = new Vector(
                 mouseX - this.owner.position.x - this.owner.size.x / 2,
                 mouseY - this.owner.position.y - this.owner.size.y / 2
             );
-    
+
             if (this.gunOptions.customs.inaccuracy !== 0) {
                 direction = this.calculateInaccuracy(
                     direction,
@@ -218,7 +233,7 @@ class Gun extends Item {
             } else {
                 direction = direction.normalize();
             }
-    
+
             let bullet = new Bullet(
                 this.owner,
                 10,
@@ -228,23 +243,23 @@ class Gun extends Item {
                 5,
                 "assets/images/bullet.png"
             );
-    
+
             if (!this.shotFirstBullet && !this.firing) {
                 projectiles.push(bullet);
                 this.gunOptions.customs.ammo--;
-    
+
                 this.recoilAnimation();
                 await wait(roundsPerMillsec);
-    
+
                 this.shotFirstBullet = true;
             } else if (this.shotFirstBullet && this.type !== GunType.SemiAuto) {
                 this.firing = true;
                 this.fireTimer += deltaTime;
-    
+
                 if (this.fireTimer >= roundsPerMillsec) {
                     projectiles.push(bullet);
                     this.gunOptions.customs.ammo--;
-    
+
                     this.recoilAnimation();
                     this.fireTimer = 0;
                 }

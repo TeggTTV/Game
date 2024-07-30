@@ -1,6 +1,6 @@
 "use strict";
 function colCheck(shapeA, shapeB, moveShapeA = true) {
-    var vX = shapeA.position.x + tileWidth / 2 - (shapeB.position.x + tileWidth / 2), vY = shapeA.position.y + tileHeight / 2 - (shapeB.position.y + tileHeight / 2), hWidths = tileWidth / 2 + tileWidth / 2, hHeights = tileHeight / 2 + tileHeight / 2, colDir = null;
+    var vX = shapeA.position.x + shapeA.size.x / 2 - (shapeB.position.x + shapeB.size.x / 2), vY = shapeA.position.y + shapeA.size.y / 2 - (shapeB.position.y + shapeB.size.y / 2), hWidths = shapeA.size.x / 2 + shapeB.size.x / 2, hHeights = shapeA.size.y / 2 + shapeB.size.y / 2, colDir = null;
     if (Math.abs(vX) <= hWidths && Math.abs(vY) <= hHeights) {
         var oX = hWidths - Math.abs(vX), oY = hHeights - Math.abs(vY);
         if (oX >= oY) {

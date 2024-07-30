@@ -8,6 +8,7 @@ class Tile {
         this.hovering = false;
         this.immovable = false;
         this.barrier = false;
+        this.size = new Vector(tileWidth, tileHeight);
     }
     setBarrier(barrier) {
         this.barrier = barrier;

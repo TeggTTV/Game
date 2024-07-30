@@ -1,6 +1,7 @@
 type EntityOptions = {
     imgPath: string;
     customs: EntityCustoms;
+    drops: EntityDrops | null
 };
 
 class Entity {
@@ -31,7 +32,9 @@ class Entity {
         this.maxHealth = 100;
     }
     draw() {}
-    update(deltaTime: number) {deltaTime++;}
+    update(deltaTime: number) {
+        deltaTime++;
+    }
     colCheck(pos: Thing) {
         let dir = colCheck(this, pos);
         if (dir === "l" || dir === "r") {
@@ -48,13 +51,15 @@ class Entity {
             this.position.y + this.size.y > projectile.position.y
         ) {
             this.health -= projectile.damage;
-            let damageText = new DamageText(this.position.copy().add(new Vector(this.size.x/4, this.size.y/2)), projectile.damage);
+            let damageText = new DamageText(
+                this.position
+                    .copy()
+                    .add(new Vector(this.size.x / 4, this.size.y / 2)),
+                projectile.damage
+            );
             damageTexts.push(damageText);
             projectile.delete();
         }
     }
-    delete() {
-        let index = entities.indexOf(this);
-        entities.splice(index, 1);
-    }
+    delete() {}
 }

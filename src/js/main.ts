@@ -12,7 +12,8 @@ let player: Player = new Player(new Vector(5 * tileWidth, 5 * tileHeight), {
         health: 100,
         maxHealth: 100,
         speed: 4,
-    }
+    },
+    drops: null,
 });
 let map: TileMap = new TileMap(60, 34);
 
@@ -27,9 +28,36 @@ let testEnemy: Monster = new Monster(
     {
         imgPath: "assets/images/red.png",
         customs: new EntityCustoms(20, 20, 10),
+        drops: new EntityDrops([
+            {
+                chance: 1,
+                item: new Gun(
+                    null,
+                    "AK-47",
+                    GunType.FullAuto,
+                    {
+                        imgPath: BaseAK47.imgPath,
+                        customs: new GunCustoms(
+                            1200,
+                            100,
+                            0.01,
+                            10,
+                            0,
+                            2,
+                            30,
+                            90,
+                            false,
+                            10,
+                            1,
+                            5
+                        ),
+                    },
+                    GunLores["AK-47"],
+                ),
+            },
+        ]),
     }
 );
-
 
 async function init() {
     canvas = document.getElementById("canvas") as HTMLCanvasElement;
@@ -55,51 +83,62 @@ async function init() {
             GunType.FullAuto,
             {
                 imgPath: BaseAK47.imgPath,
-                customs: new GunCustoms(1200, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
+                customs: new GunCustoms(
+                    1200,
+                    100,
+                    0.01,
+                    10,
+                    0,
+                    2,
+                    30,
+                    90,
+                    false,
+                    10,
+                    1,
+                    5
+                ),
             },
             GunLores["AK-47"],
-            "assets/images/guns/AK-47.png"
         )
     );
-    player.setHolding(player.items[0]);
+    player.setHolding(player.inventory.getItems()[0]);
 
     droppedItems.push(
         new DroppedItem(
-            new Vector(10 * tileWidth, 10 * tileHeight),
+            new Vector(10 * tileWidth, 7 * tileHeight),
             new Vector(30, 30),
             {
-                imgPath: 
-            "assets/images/yellow.png",
+                imgPath: "assets/images/yellow.png",
                 customs: {
                     health: null,
                     maxHealth: null,
                     speed: null,
-                }
+                },
+                drops: null,
             },
             new Gun(
                 null,
-                "AK-47",
-                GunType.FullAuto,
+                "M9",
+                GunType.SemiAuto,
                 {
                     imgPath: BaseAK47.imgPath,
                     customs: new GunCustoms(
-                        1200,
+                        1,
                         100,
                         0.01,
                         10,
                         0,
                         2,
-                        30,
-                        90,
+                        9,
+                        40,
                         false,
                         10,
                         1,
                         5
                     ),
                 },
-                GunLores["AK-47"],
-                "assets/images/guns/AK-47.png"
-            ),
+                GunLores["Beretta M9"],
+            )
         )
     );
 
@@ -122,7 +161,14 @@ function render() {
     // draw map
     map.draw();
 
-    // draw al entities
+    /* ------------------------------------------------------------------------------------------------------------------ */
+    /*                                                 draw al entities                                                   */
+    /* ------------------------------------------------------------------------------------------------------------------ */
+    droppedItems.forEach((droppedItem: DroppedItem) => {
+        droppedItem.draw();
+        droppedItem.update();
+        player.colCheck(droppedItem);
+    });
     entities.forEach((entity: Entity) => {
         entity.draw();
         entity.update(deltaTime);
@@ -136,17 +182,19 @@ function render() {
         damageText.draw();
         damageText.update(deltaTime);
     });
-    droppedItems.forEach((droppedItem: DroppedItem) => {
-        droppedItem.draw();
-        droppedItem.update();
-        player.colCheck(droppedItem);
-    })
+    hoverHints.forEach((hoverHint: Hint) => {
+        hoverHint.draw();
+    });
     // player drawn last
     player.draw();
     player.update(deltaTime);
 
     // update camera to follow player
     camera.update(player);
+
+    /* ------------------------------------------------------------------------------------------------------------------ */
+    /*                                                      Draw Map                                                      */
+    /* ------------------------------------------------------------------------------------------------------------------ */
 
     for (let i = 0; i < map.tiles.length; i++) {
         // Check if mouse is hovering over a tile
@@ -166,16 +214,19 @@ function render() {
 
     camera.size.x = canvas.width;
     camera.size.y = canvas.height;
-    // ui
+    /* ------------------------------------------------------------------------------------------------------------------ */
+    /*                                                         UI                                                         */
+    /* ------------------------------------------------------------------------------------------------------------------ */
     ctx.fillStyle = "black";
     ctx.font = "30px Arial";
     ctx.fillText("Health: " + player.health, 10, 30);
+    
     if (player.holding instanceof Gun) {
         ctx.fillText(
             "Ammo: " +
                 player.holding.gunOptions.customs.ammo +
                 "/" +
-                player.holding.gunOptions.customs.reserveAmmo,
+                player.holding.gunOptions.customs.reserveAmmo + " / caliber=" + player.holding.gunLore.caliber,
             10,
             60
         );

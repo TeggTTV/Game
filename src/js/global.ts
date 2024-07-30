@@ -29,8 +29,9 @@ const zonesVisible: boolean = false;
 
 const entities: any = [];
 const projectiles: any = [];
-const damageTexts: any = [];
-const droppedItems: any = [];
+const damageTexts: DamageText[] = [];
+const droppedItems: DroppedItem[] = [];
+const hoverHints: Hint[] = [];
 
 // let resolutions: any = [];
 // let resolut 
