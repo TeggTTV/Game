@@ -22,15 +22,15 @@ class Player {
     options: EntityOptions;
 
     hovering: DroppedItem | null;
+    activPickupHint: PickupHint | null;
 
     inventory: Inventory;
+    hotbar: Hotbar;
 
     constructor(position: Vector, options: EntityOptions) {
         this.position = position;
 
         this.size = new Vector(tileWidth, tileHeight);
-        // this.locationPerecentX = this.x / width;
-        // this.locationPerecentY = this.y / height;
 
         this.imgLoader = new ImageLoader();
         this.image = new Image();
@@ -52,12 +52,14 @@ class Player {
         this.options = options;
 
         this.hovering = null;
+        this.activPickupHint = null;
 
         this.inventory = new Inventory({
             maxSize: 50,
             size: 20,
         });
 
+        this.hotbar = new Hotbar();
     }
     async init() {
         await this.imgLoader.loadImage("Player", "assets/images/red.png");
@@ -73,6 +75,10 @@ class Player {
         if (this.holding instanceof Gun) {
             this.holding.draw();
         }
+
+        if (this.activPickupHint) {
+            this.activPickupHint.draw();
+        }
     }
     update(deltaTime: number) {
         this.checkKeys();
@@ -82,7 +88,6 @@ class Player {
 
         // if (this.placingTile) {
         // }
-
     }
     colCheck(obj: Entity | Tile) {
         if (obj instanceof Tile) {
@@ -117,19 +122,43 @@ class Player {
             }
         } else if (obj instanceof Entity) {
             if (obj instanceof DroppedItem) {
+                // let anyCollisions = false;
                 if (colCheck(this, obj, false)) {
-                    if(obj.itemData instanceof Gun) {
-                        let keyHoverHint = new PickupHint(obj, ["F to Pickup " + obj.itemData.gunLore.name], 20);
-                        keyHoverHint.draw();
-                        this.hovering = obj;                    
+                    // anyCollisions = true;
+                    if (obj.itemData instanceof Gun) {
+                        let keyHoverHint = new PickupHint(
+                            obj.itemData,
+                            obj,
+                            ["F to Pickup " + obj.itemData.gunLore.name],
+                            20
+                        );
+                        this.activPickupHint = keyHoverHint;
+                        // keyHoverHint.draw();
+                        // let inArr = false;
+                        // for (let hint of hoverHints) {
+                        //     if (hint instanceof PickupHint) {
+                        //         if (hint.item.id === obj.itemData.id) {
+                        //             inArr = true;
+                        //         }
+                        //     }
+                        // }
+                        // if (!inArr) hoverHints.push(keyHoverHint);
+                        this.hovering = obj;
                     }
                 } else {
-                    if(!this.hovering)
-                        this.hovering = null;
+                    this.hovering = null;
                 }
-                
             }
-        } 
+        }
+
+        if (!this.hovering) {
+            // for (let hint of hoverHints) {
+            //     if (hint instanceof PickupHint) {
+            //         hint.delete();
+            //     }
+            // }
+            this.activPickupHint = null;
+        }
     }
     checkMouse() {
         if (mouse.down) {
@@ -158,7 +187,6 @@ class Player {
     }
     checkKeys() {
         if (keys["0"]) {
-            
         }
         if (keys["1"]) {
         }
@@ -201,12 +229,26 @@ class Player {
                 this.hovering.delete();
                 this.hovering = null;
             }
+
+            keys["f"] = false;
         }
 
         if (keys["r"]) {
             if (this.holding) {
                 if (this.holding instanceof Gun) {
                     this.holding.reload();
+                }
+            }
+        }
+
+        if (keys[" "]) {
+            for (let monster of entities) {
+                if (monster instanceof Monster) {
+                    if (this.holding instanceof Gun)
+                        this.holding.shoot(
+                            monster.position.x,
+                            monster.position.y
+                        );
                 }
             }
         }

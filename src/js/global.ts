@@ -31,7 +31,7 @@ const entities: any = [];
 const projectiles: any = [];
 const damageTexts: DamageText[] = [];
 const droppedItems: DroppedItem[] = [];
-const hoverHints: Hint[] = [];
+let hoverHints: Hint[] = [];
 
 // let resolutions: any = [];
 // let resolut 

@@ -24,10 +24,12 @@ class Player {
         this.maxHealth = 100;
         this.options = options;
         this.hovering = null;
+        this.activPickupHint = null;
         this.inventory = new Inventory({
             maxSize: 50,
             size: 20,
         });
+        this.hotbar = new Hotbar();
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -42,6 +44,9 @@ class Player {
         ctx.fillRect(this.position.x, this.position.y, tileWidth, tileHeight);
         if (this.holding instanceof Gun) {
             this.holding.draw();
+        }
+        if (this.activPickupHint) {
+            this.activPickupHint.draw();
         }
     }
     update(deltaTime) {
@@ -84,16 +89,18 @@ class Player {
             if (obj instanceof DroppedItem) {
                 if (colCheck(this, obj, false)) {
                     if (obj.itemData instanceof Gun) {
-                        let keyHoverHint = new PickupHint(obj, ["F to Pickup " + obj.itemData.gunLore.name], 20);
-                        keyHoverHint.draw();
+                        let keyHoverHint = new PickupHint(obj.itemData, obj, ["F to Pickup " + obj.itemData.gunLore.name], 20);
+                        this.activPickupHint = keyHoverHint;
                         this.hovering = obj;
                     }
                 }
                 else {
-                    if (!this.hovering)
-                        this.hovering = null;
+                    this.hovering = null;
                 }
             }
+        }
+        if (!this.hovering) {
+            this.activPickupHint = null;
         }
     }
     checkMouse() {
@@ -159,11 +166,20 @@ class Player {
                 this.hovering.delete();
                 this.hovering = null;
             }
+            keys["f"] = false;
         }
         if (keys["r"]) {
             if (this.holding) {
                 if (this.holding instanceof Gun) {
                     this.holding.reload();
+                }
+            }
+        }
+        if (keys[" "]) {
+            for (let monster of entities) {
+                if (monster instanceof Monster) {
+                    if (this.holding instanceof Gun)
+                        this.holding.shoot(monster.position.x, monster.position.y);
                 }
             }
         }

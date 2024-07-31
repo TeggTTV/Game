@@ -74,7 +74,8 @@ The player will use WASD to move around, use the cursor to make actions such as 
         - Animals (Cow, Pig, etc.)
         - Monsters (Wolves, Bears, etc.)
     - The player will use these items to craft weapons, armor, meals (health, stamina, etc.), and other items.
-
+- Player kills animals for food
+    - Player can lure animals bb holding their favoirte food (tricking them MWAHAHAHAHA)
 
 - While the player roams the world, they will inevitably come across monsters. The player can choose to fight or flee.
     - If the player chooses to fight, they will be rewarded with money, experience, and items based on chance.

@@ -3,7 +3,6 @@ class ItemAddedToInventoryHint extends Hint {
     constructor(item: Item) {
         super([`${item.name}!`], 20);
         this.item = item;
-
         this.descriptions.push({
             text: this.descriptionArr[0],
             width: ctx.measureText(this.descriptionArr[0]).width,
@@ -14,7 +13,7 @@ class ItemAddedToInventoryHint extends Hint {
         // bottom right of the screen, black text, floats up and looses opacity
         let margin = 10;
         let first = this.descriptions[0];
-        
+
         let h = first.height * this.descriptionArr.length;
 
         let maxWidth = Math.max(...this.descriptions.map((d) => d.width));
@@ -39,7 +38,7 @@ class ItemAddedToInventoryHint extends Hint {
             ctx.fillText(
                 this.descriptions[i].text,
                 background.x + margin,
-                background.y + margin + (i * first.height) + (first.height)
+                background.y + margin + i * first.height + first.height
             );
         }
 
@@ -48,7 +47,7 @@ class ItemAddedToInventoryHint extends Hint {
             ctx.fillText(
                 this.descriptions[i].text,
                 background.x + margin,
-                background.y + margin + (i * first.height) + (first.height)
+                background.y + margin + i * first.height + first.height
             );
         }
     }

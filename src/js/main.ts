@@ -84,7 +84,7 @@ async function init() {
             {
                 imgPath: BaseAK47.imgPath,
                 customs: new GunCustoms(
-                    1200,
+                    600,
                     100,
                     0.01,
                     10,
@@ -169,11 +169,12 @@ function render() {
         droppedItem.update();
         player.colCheck(droppedItem);
     });
+
     entities.forEach((entity: Entity) => {
         entity.draw();
         entity.update(deltaTime);
     });
-
+    
     projectiles.forEach((projectile: any) => {
         projectile.draw();
         projectile.update(deltaTime);

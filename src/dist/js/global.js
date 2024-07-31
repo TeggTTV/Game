@@ -27,7 +27,7 @@ const entities = [];
 const projectiles = [];
 const damageTexts = [];
 const droppedItems = [];
-const hoverHints = [];
+let hoverHints = [];
 function resize() {
     tileWidth = width / tilesPerRow;
     tileHeight = height / tilesPerColumn;
