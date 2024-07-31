@@ -125,7 +125,7 @@ async function init() {
                 {
                     imgPath: BaseAK47.imgPath,
                     customs: new GunCustoms(
-                        1,
+                        2000,
                         100,
                         0.01,
                         10,
@@ -169,7 +169,13 @@ function render() {
     droppedItems.forEach((droppedItem: DroppedItem) => {
         droppedItem.draw();
         droppedItem.update();
-        player.colCheck(droppedItem);
+
+        let playerColDroppedItem = player.colCheck(droppedItem);
+        if(playerColDroppedItem) {
+            player.activPickupHint = playerColDroppedItem;
+        } else if(!playerColDroppedItem && player.activPickupHint.original instanceof Entity && !player.colCheck(player.activPickupHint.original)) {
+            player.activPickupHint = {hint: null, original: null};
+        }
     });
 
     entities.forEach((entity: Entity) => {

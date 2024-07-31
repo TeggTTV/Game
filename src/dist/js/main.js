@@ -63,7 +63,7 @@ function init() {
             drops: null,
         }, new Gun(null, "M9", GunType.SemiAuto, {
             imgPath: BaseAK47.imgPath,
-            customs: new GunCustoms(1, 100, 0.01, 10, 0, 2, 9, 40, false, 10, 1, 5),
+            customs: new GunCustoms(2000, 100, 0.01, 10, 0, 2, 9, 40, false, 10, 1, 5),
         }, GunLores["Beretta M9"])));
         game = new Game();
         window.requestAnimationFrame(render);
@@ -81,7 +81,13 @@ function render() {
     droppedItems.forEach((droppedItem) => {
         droppedItem.draw();
         droppedItem.update();
-        player.colCheck(droppedItem);
+        let playerColDroppedItem = player.colCheck(droppedItem);
+        if (playerColDroppedItem) {
+            player.activPickupHint = playerColDroppedItem;
+        }
+        else if (!playerColDroppedItem && player.activPickupHint.original instanceof Entity && !player.colCheck(player.activPickupHint.original)) {
+            player.activPickupHint = { hint: null, original: null };
+        }
     });
     entities.forEach((entity) => {
         entity.draw();

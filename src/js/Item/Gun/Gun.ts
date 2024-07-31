@@ -252,9 +252,10 @@ class Gun extends Item {
                 await wait(roundsPerMillsec);
 
                 this.shotFirstBullet = true;
-            } else if (this.shotFirstBullet && this.type !== GunType.SemiAuto) {
+            } else if (this.shotFirstBullet && this.type !== GunType.SemiAuto) { 
                 this.firing = true;
                 this.fireTimer += deltaTime;
+
 
                 if (this.fireTimer >= roundsPerMillsec) {
                     projectiles.push(bullet);

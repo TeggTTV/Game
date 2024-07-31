@@ -22,7 +22,10 @@ class Player {
     options: EntityOptions;
 
     hovering: DroppedItem | null;
-    activPickupHint: PickupHint | null;
+    activPickupHint: {
+        hint: PickupHint | null;
+        original: Entity | null;
+    };
 
     inventory: Inventory;
     hotbar: Hotbar;
@@ -52,7 +55,10 @@ class Player {
         this.options = options;
 
         this.hovering = null;
-        this.activPickupHint = null;
+        this.activPickupHint = {
+            hint: null,
+            original: null,
+        };
 
         this.inventory = new Inventory({
             maxSize: 50,
@@ -66,7 +72,6 @@ class Player {
         // this.img = this.imgLoader.getImage("Player");
     }
     equip(item: Item) {
-        
         this.hotbar.setSlot(
             item,
             item.quantity,
@@ -83,8 +88,8 @@ class Player {
             this.holding.draw();
         }
 
-        if (this.activPickupHint) {
-            this.activPickupHint.draw();
+        if (this.activPickupHint.hint) {
+            this.activPickupHint.hint.draw();
         }
     }
     update(deltaTime: number) {
@@ -96,7 +101,8 @@ class Player {
         // if (this.placingTile) {
         // }
     }
-    colCheck(obj: Entity | Tile) {
+    colCheck(obj: Entity | Tile): any {
+        let collidedWith = false;
         if (obj instanceof Tile) {
             if (obj instanceof TileZone) {
                 // check type of tile
@@ -128,28 +134,23 @@ class Player {
                 }
             }
         } else if (obj instanceof Entity) {
+            if (collidedWith) return;
             if (obj instanceof DroppedItem) {
-                // let anyCollisions = false;
                 if (colCheck(this, obj, false)) {
-                    // anyCollisions = true;
+                    collidedWith = true;
                     if (obj.itemData instanceof Gun) {
-                        let keyHoverHint = new PickupHint(
-                            obj.itemData,
-                            obj,
-                            ["F to Pickup " + obj.itemData.gunLore.name],
-                            20
-                        );
-                        this.activPickupHint = keyHoverHint;
-                        this.hovering = obj;
+                        return {
+                            hint: new PickupHint(
+                                obj.itemData,
+                                obj,
+                                ["F to Pickup " + obj.itemData.gunLore.name],
+                                20
+                            ),
+                            original: obj,
+                        };
                     }
-                } else {
-                    this.hovering = null;
                 }
             }
-        }
-
-        if (!this.hovering) {
-            this.activPickupHint = null;
         }
     }
     checkMouse() {
@@ -213,13 +214,14 @@ class Player {
         }
 
         if (keys["f"]) {
-            if (this.hovering instanceof DroppedItem) {
-                let item = this.hovering.itemData;
+            if (this.activPickupHint.hint && this.activPickupHint.original instanceof DroppedItem) {
+
+                let item = this.activPickupHint.hint.item;
                 this.equip(item);
                 item.owner = this;
 
-                this.hovering.delete();
-                this.hovering = null;
+                this.activPickupHint.original.delete();
+                this.activPickupHint = { hint: null, original: null };
             }
 
             keys["f"] = false;
@@ -262,7 +264,7 @@ class Player {
         this.holding = item;
     }
     dropHolding() {
-        if(this.holding) {
+        if (this.holding) {
             let newDroppedItem = new DroppedItem(
                 this.position,
                 new Vector(30, 30),
