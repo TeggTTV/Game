@@ -46,7 +46,7 @@ class Gun extends Item {
         },
         gunLore: any,
     ) {
-        super(owner, name);
+        super(owner, name, 1);
         this.name = name;
         this.type = gunType;
 

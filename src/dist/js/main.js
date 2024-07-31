@@ -48,11 +48,11 @@ function init() {
         yield player.init();
         yield map.loadMap("Other/Maps/Map1.json", "assets/images/asesprite/tileset.png");
         entities.push(testEnemy);
+        console.log(JSON.stringify(player.hotbar));
         player.equip(new Gun(player, "AK-47", GunType.FullAuto, {
             imgPath: BaseAK47.imgPath,
-            customs: new GunCustoms(600, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
+            customs: new GunCustoms(1200, 100, 0.1, 10, 0, 2, 30, 90, false, 10, 1, 5),
         }, GunLores["AK-47"]));
-        player.setHolding(player.inventory.getItems()[0]);
         droppedItems.push(new DroppedItem(new Vector(10 * tileWidth, 7 * tileHeight), new Vector(30, 30), {
             imgPath: "assets/images/yellow.png",
             customs: {

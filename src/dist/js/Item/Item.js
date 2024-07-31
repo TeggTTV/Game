@@ -1,9 +1,11 @@
 "use strict";
 class Item {
-    constructor(owner, name, imgPath) {
+    constructor(owner, name, quantity, imgPath) {
+        this.quantity = 1;
         this.id = this.assignId();
         this.owner = owner;
         this.name = name;
+        this.quantity = quantity;
         this.imgLoader = new ImageLoader();
         if (!imgPath)
             return;

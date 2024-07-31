@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 class Gun extends Item {
     constructor(owner, name, gunType, gunOptions, gunLore) {
-        super(owner, name);
+        super(owner, name, 1);
         this.shotFirstBullet = false;
         this.name = name;
         this.type = gunType;

@@ -76,6 +76,8 @@ async function init() {
     );
 
     entities.push(testEnemy);
+    console.log(JSON.stringify(player.hotbar));
+    
     player.equip(
         new Gun(
             player,
@@ -84,9 +86,9 @@ async function init() {
             {
                 imgPath: BaseAK47.imgPath,
                 customs: new GunCustoms(
-                    600,
+                    1200,
                     100,
-                    0.01,
+                    0.1,
                     10,
                     0,
                     2,
@@ -101,7 +103,7 @@ async function init() {
             GunLores["AK-47"],
         )
     );
-    player.setHolding(player.inventory.getItems()[0]);
+    // player.setHolding(player.inventory.getItems()[0]);
 
     droppedItems.push(
         new DroppedItem(

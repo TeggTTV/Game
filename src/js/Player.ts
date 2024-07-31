@@ -66,7 +66,14 @@ class Player {
         // this.img = this.imgLoader.getImage("Player");
     }
     equip(item: Item) {
-        this.inventory.add(item);
+        
+        this.hotbar.setSlot(
+            item,
+            item.quantity,
+            this.hotbar.nextAvailableSlot()
+        );
+
+        this.holding = item;
     }
     draw() {
         // ctx.drawImage(this.img, this.x, this.y, tileWidth, tileHeight);
@@ -133,16 +140,6 @@ class Player {
                             20
                         );
                         this.activPickupHint = keyHoverHint;
-                        // keyHoverHint.draw();
-                        // let inArr = false;
-                        // for (let hint of hoverHints) {
-                        //     if (hint instanceof PickupHint) {
-                        //         if (hint.item.id === obj.itemData.id) {
-                        //             inArr = true;
-                        //         }
-                        //     }
-                        // }
-                        // if (!inArr) hoverHints.push(keyHoverHint);
                         this.hovering = obj;
                     }
                 } else {
@@ -152,11 +149,6 @@ class Player {
         }
 
         if (!this.hovering) {
-            // for (let hint of hoverHints) {
-            //     if (hint instanceof PickupHint) {
-            //         hint.delete();
-            //     }
-            // }
             this.activPickupHint = null;
         }
     }
@@ -223,7 +215,7 @@ class Player {
         if (keys["f"]) {
             if (this.hovering instanceof DroppedItem) {
                 let item = this.hovering.itemData;
-                this.inventory.add(item);
+                this.equip(item);
                 item.owner = this;
 
                 this.hovering.delete();
@@ -260,11 +252,6 @@ class Player {
             this.vel.y = 0;
         }
     }
-    resizeEvent(ratio: Vector) {
-        // this.x = this.locationPerecentX * map.sizeX * tileWidth;
-        // this.y = this.locationPerecentY * map.sizeY * tileHeight;
-        this.position = Vector.mul(this.position, ratio);
-    }
     getItems() {
         return this.inventory.getItems();
     }
@@ -275,8 +262,24 @@ class Player {
         this.holding = item;
     }
     dropHolding() {
-        this.holding = null;
-        // drop logic
+        if(this.holding) {
+            let newDroppedItem = new DroppedItem(
+                this.position,
+                new Vector(30, 30),
+                {
+                    imgPath: "assets/images/yellow.png",
+                    customs: {
+                        health: null,
+                        maxHealth: null,
+                        speed: null,
+                    },
+                    drops: null,
+                },
+                this.holding
+            );
+            droppedItems.push(newDroppedItem);
+            this.holding = null;
+        }
     }
     handleProjectileCollision() {}
     delete() {}

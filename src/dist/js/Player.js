@@ -37,7 +37,8 @@ class Player {
         });
     }
     equip(item) {
-        this.inventory.add(item);
+        this.hotbar.setSlot(item, item.quantity, this.hotbar.nextAvailableSlot());
+        this.holding = item;
     }
     draw() {
         ctx.fillStyle = "black";
@@ -161,7 +162,7 @@ class Player {
         if (keys["f"]) {
             if (this.hovering instanceof DroppedItem) {
                 let item = this.hovering.itemData;
-                this.inventory.add(item);
+                this.equip(item);
                 item.owner = this;
                 this.hovering.delete();
                 this.hovering = null;
@@ -190,9 +191,6 @@ class Player {
             this.vel.y = 0;
         }
     }
-    resizeEvent(ratio) {
-        this.position = Vector.mul(this.position, ratio);
-    }
     getItems() {
         return this.inventory.getItems();
     }
@@ -203,7 +201,19 @@ class Player {
         this.holding = item;
     }
     dropHolding() {
-        this.holding = null;
+        if (this.holding) {
+            let newDroppedItem = new DroppedItem(this.position, new Vector(30, 30), {
+                imgPath: "assets/images/yellow.png",
+                customs: {
+                    health: null,
+                    maxHealth: null,
+                    speed: null,
+                },
+                drops: null,
+            }, this.holding);
+            droppedItems.push(newDroppedItem);
+            this.holding = null;
+        }
     }
     handleProjectileCollision() { }
     delete() { }
