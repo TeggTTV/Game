@@ -1,7 +1,9 @@
 class Hotbar {
     slots: Slot[];
     slotCount?: number = 10;
-    constructor(slotCount: number = 10) {
+    owner: Entity;
+    constructor(owner: Entity, slotCount: number = 10) {
+        this.owner = owner;
         this.slots = new Array(slotCount).fill(null);
         this.slotCount = slotCount;
     }
@@ -19,4 +21,10 @@ class Hotbar {
     nextAvailableSlot() {
         return this.slots.findIndex((slot) => slot === null);
     }
+    changeSlot(index: number) {
+        if (this.slots[index] && this.slots[index].item) {
+            this.owner.setHolding(this.slots[index].item);
+            
+        }
+    }   
 }

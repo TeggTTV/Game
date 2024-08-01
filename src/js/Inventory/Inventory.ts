@@ -6,9 +6,13 @@ type InventoryOptions = {
 class Inventory {
     options: InventoryOptions;
     items: Item[];
-    constructor(options: InventoryOptions) {
+    hotbar: Hotbar;
+    owner: Entity;
+    constructor(owner: Entity, options: InventoryOptions) {
         this.options = options;
         this.items = [];
+        this.owner = owner;
+        this.hotbar = new Hotbar(this.owner);
     }
     add(item: Item) {
         this.items.push(item);

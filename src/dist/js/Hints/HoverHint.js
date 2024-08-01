@@ -46,6 +46,7 @@ class HoverHint extends Hint {
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         ctx.fillRect(camera.position.x + background.x, camera.position.y + background.y, background.width + margin * 2, background.height + margin * 2);
         ctx.fillStyle = "white";
+        ctx.font = "20px Arial";
         for (let i = 0; i < this.descriptions.length; i++) {
             ctx.fillText(this.descriptions[i].text, camera.position.x + mouse.x + margin, camera.position.y +
                 mouse.y +

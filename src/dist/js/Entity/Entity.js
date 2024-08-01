@@ -11,6 +11,7 @@ class Entity {
         this.acceleration = new Vector(0, 0);
         this.health = 1;
         this.maxHealth = 100;
+        this.holding = null;
     }
     draw() { }
     update(deltaTime) {
@@ -39,5 +40,8 @@ class Entity {
         }
     }
     delete() { }
+    setHolding(item) {
+        this.holding = item;
+    }
 }
 //# sourceMappingURL=Entity.js.map

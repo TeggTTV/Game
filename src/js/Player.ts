@@ -28,7 +28,6 @@ class Player {
     };
 
     inventory: Inventory;
-    hotbar: Hotbar;
 
     constructor(position: Vector, options: EntityOptions) {
         this.position = position;
@@ -60,22 +59,20 @@ class Player {
             original: null,
         };
 
-        this.inventory = new Inventory({
+        this.inventory = new Inventory(this, {
             maxSize: 50,
             size: 20,
         });
-
-        this.hotbar = new Hotbar();
     }
     async init() {
         await this.imgLoader.loadImage("Player", "assets/images/red.png");
         // this.img = this.imgLoader.getImage("Player");
     }
     equip(item: Item) {
-        this.hotbar.setSlot(
+        this.inventory.hotbar.setSlot(
             item,
             item.quantity,
-            this.hotbar.nextAvailableSlot()
+            this.inventory.hotbar.nextAvailableSlot()
         );
 
         this.holding = item;
@@ -179,27 +176,20 @@ class Player {
         }
     }
     checkKeys() {
-        if (keys["0"]) {
+        /* ------------------------------------------------------------------------------------------------------------------ */
+        /*                                              Inventory Slot Selection                                              */
+        /* ------------------------------------------------------------------------------------------------------------------ */
+        for (let key of Object.keys(keys)) {
+            if (parseInt(key)) {
+                if (keys[key]) {
+                    if (key === "0") this.inventory.hotbar.changeSlot(9);
+                    else this.inventory.hotbar.changeSlot(parseInt(key) - 1);
+                }
+            }
         }
-        if (keys["1"]) {
-        }
-        if (keys["2"]) {
-        }
-        if (keys["3"]) {
-        }
-        if (keys["4"]) {
-        }
-        if (keys["5"]) {
-        }
-        if (keys["6"]) {
-        }
-        if (keys["7"]) {
-        }
-        if (keys["8"]) {
-        }
-        if (keys["9"]) {
-        }
-
+        /* ------------------------------------------------------------------------------------------------------------------ */
+        /*                                                      Movement                                                      */
+        /* ------------------------------------------------------------------------------------------------------------------ */
         if (keys["w"]) {
             this.vel.y -= this.acceleration.y;
         }
@@ -214,8 +204,10 @@ class Player {
         }
 
         if (keys["f"]) {
-            if (this.activPickupHint.hint && this.activPickupHint.original instanceof DroppedItem) {
-
+            if (
+                this.activPickupHint.hint &&
+                this.activPickupHint.original instanceof DroppedItem
+            ) {
                 let item = this.activPickupHint.hint.item;
                 this.equip(item);
                 item.owner = this;
@@ -226,7 +218,9 @@ class Player {
 
             keys["f"] = false;
         }
-
+        /* ------------------------------------------------------------------------------------------------------------------ */
+        /*                                                       Reload                                                       */
+        /* ------------------------------------------------------------------------------------------------------------------ */
         if (keys["r"]) {
             if (this.holding) {
                 if (this.holding instanceof Gun) {

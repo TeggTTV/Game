@@ -1,7 +1,8 @@
 "use strict";
 class Hotbar {
-    constructor(slotCount = 10) {
+    constructor(owner, slotCount = 10) {
         this.slotCount = 10;
+        this.owner = owner;
         this.slots = new Array(slotCount).fill(null);
         this.slotCount = slotCount;
     }
@@ -19,6 +20,11 @@ class Hotbar {
     }
     nextAvailableSlot() {
         return this.slots.findIndex((slot) => slot === null);
+    }
+    changeSlot(index) {
+        if (this.slots[index] && this.slots[index].item) {
+            this.owner.setHolding(this.slots[index].item);
+        }
     }
 }
 //# sourceMappingURL=Hotbar.js.map

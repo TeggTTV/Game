@@ -76,7 +76,6 @@ async function init() {
     );
 
     entities.push(testEnemy);
-    console.log(JSON.stringify(player.hotbar));
     
     player.equip(
         new Gun(
@@ -245,6 +244,14 @@ function render() {
             ctx.fillStyle = "black";
         }
     }
+
+    let slotTxt = "";
+    for(let slot of player.inventory.hotbar.slots) {
+        if(slot) {
+            slotTxt += slot.item?.name + " | ";
+        }
+    }
+    ctx.fillText(slotTxt, 10, 120);
 
     // minimap.draw();
     // minimap.update();

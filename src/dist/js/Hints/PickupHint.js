@@ -23,14 +23,28 @@ class PickupHint extends Hint {
         let first = this.descriptions[0];
         let h = first.height * this.descriptionArr.length;
         ctx.fillStyle = "black";
-        for (let i = 0; i < this.descriptions.length; i++) {
-            ctx.fillText(this.descriptions[i].text, this.entity.position.x - first.width / 2 + this.entity.size.x / 2 + 2, this.entity.position.y - h + (i * first.height) + (first.height) + 2 - 10);
-        }
-        ctx.fillStyle = "white";
+        ctx.font = "20px Arial";
         for (let i = 0; i < this.descriptions.length; i++) {
             ctx.fillText(this.descriptions[i].text, this.entity.position.x -
                 first.width / 2 +
-                this.entity.size.x / 2, this.entity.position.y - h + i * first.height + first.height - 10);
+                this.entity.size.x / 2 +
+                2, this.entity.position.y -
+                h +
+                i * first.height +
+                first.height +
+                2 -
+                10);
+        }
+        ctx.fillStyle = "white";
+        ctx.font = "20px Arial";
+        for (let i = 0; i < this.descriptions.length; i++) {
+            ctx.fillText(this.descriptions[i].text, this.entity.position.x -
+                first.width / 2 +
+                this.entity.size.x / 2, this.entity.position.y -
+                h +
+                i * first.height +
+                first.height -
+                10);
         }
     }
 }

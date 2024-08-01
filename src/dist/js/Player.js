@@ -28,11 +28,10 @@ class Player {
             hint: null,
             original: null,
         };
-        this.inventory = new Inventory({
+        this.inventory = new Inventory(this, {
             maxSize: 50,
             size: 20,
         });
-        this.hotbar = new Hotbar();
     }
     init() {
         return __awaiter(this, void 0, void 0, function* () {
@@ -40,7 +39,7 @@ class Player {
         });
     }
     equip(item) {
-        this.hotbar.setSlot(item, item.quantity, this.hotbar.nextAvailableSlot());
+        this.inventory.hotbar.setSlot(item, item.quantity, this.inventory.hotbar.nextAvailableSlot());
         this.holding = item;
     }
     draw() {
@@ -129,25 +128,15 @@ class Player {
         }
     }
     checkKeys() {
-        if (keys["0"]) {
-        }
-        if (keys["1"]) {
-        }
-        if (keys["2"]) {
-        }
-        if (keys["3"]) {
-        }
-        if (keys["4"]) {
-        }
-        if (keys["5"]) {
-        }
-        if (keys["6"]) {
-        }
-        if (keys["7"]) {
-        }
-        if (keys["8"]) {
-        }
-        if (keys["9"]) {
+        for (let key of Object.keys(keys)) {
+            if (parseInt(key)) {
+                if (keys[key]) {
+                    if (key === "0")
+                        this.inventory.hotbar.changeSlot(9);
+                    else
+                        this.inventory.hotbar.changeSlot(parseInt(key) - 1);
+                }
+            }
         }
         if (keys["w"]) {
             this.vel.y -= this.acceleration.y;
@@ -162,7 +151,8 @@ class Player {
             this.vel.x += this.acceleration.x;
         }
         if (keys["f"]) {
-            if (this.activPickupHint.hint && this.activPickupHint.original instanceof DroppedItem) {
+            if (this.activPickupHint.hint &&
+                this.activPickupHint.original instanceof DroppedItem) {
                 let item = this.activPickupHint.hint.item;
                 this.equip(item);
                 item.owner = this;

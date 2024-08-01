@@ -1,8 +1,10 @@
 "use strict";
 class Inventory {
-    constructor(options) {
+    constructor(owner, options) {
         this.options = options;
         this.items = [];
+        this.owner = owner;
+        this.hotbar = new Hotbar(this.owner);
     }
     add(item) {
         this.items.push(item);

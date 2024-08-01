@@ -58,6 +58,7 @@ class HoverHint extends Hint {
         );
 
         ctx.fillStyle = "white";
+        ctx.font = "20px Arial";
         for (let i = 0; i < this.descriptions.length; i++) {
             ctx.fillText(
                 this.descriptions[i].text,

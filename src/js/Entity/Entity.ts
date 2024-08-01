@@ -30,6 +30,8 @@ class Entity {
 
         this.health = 1;
         this.maxHealth = 100;
+
+        this.holding = null;
     }
     draw() {}
     update(deltaTime: number) {
@@ -62,4 +64,7 @@ class Entity {
         }
     }
     delete() {}
+    setHolding(item: Item) {
+        this.holding = item;
+    }
 }

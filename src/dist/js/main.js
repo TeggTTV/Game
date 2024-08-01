@@ -48,7 +48,6 @@ function init() {
         yield player.init();
         yield map.loadMap("Other/Maps/Map1.json", "assets/images/asesprite/tileset.png");
         entities.push(testEnemy);
-        console.log(JSON.stringify(player.hotbar));
         player.equip(new Gun(player, "AK-47", GunType.FullAuto, {
             imgPath: BaseAK47.imgPath,
             customs: new GunCustoms(1200, 100, 0.1, 10, 0, 2, 30, 90, false, 10, 1, 5),
@@ -72,6 +71,7 @@ function init() {
 let lastTime = 0;
 let deltaTime = 0;
 function render() {
+    var _a;
     let currentTime = performance.now();
     deltaTime = (currentTime - lastTime) / 1000;
     lastTime = currentTime;
@@ -132,6 +132,13 @@ function render() {
             ctx.fillStyle = "black";
         }
     }
+    let slotTxt = "";
+    for (let slot of player.inventory.hotbar.slots) {
+        if (slot) {
+            slotTxt += ((_a = slot.item) === null || _a === void 0 ? void 0 : _a.name) + " | ";
+        }
+    }
+    ctx.fillText(slotTxt, 10, 120);
     window.requestAnimationFrame(render);
 }
 //# sourceMappingURL=main.js.map

@@ -49,23 +49,36 @@ class PickupHint extends Hint {
         // );
 
         ctx.fillStyle = "black";
-        // // add shadow
+        ctx.font = "20px Arial";
         for (let i = 0; i < this.descriptions.length; i++) {
             ctx.fillText(
                 this.descriptions[i].text,
-                this.entity.position.x - first.width/2 + this.entity.size.x/2 + 2,
-                this.entity.position.y - h + (i * first.height) + (first.height) + 2 - 10
+                this.entity.position.x -
+                    first.width / 2 +
+                    this.entity.size.x / 2 +
+                    2,
+                this.entity.position.y -
+                    h +
+                    i * first.height +
+                    first.height +
+                    2 -
+                    10
             );
         }
         // add text
         ctx.fillStyle = "white";
+        ctx.font = "20px Arial";
         for (let i = 0; i < this.descriptions.length; i++) {
             ctx.fillText(
                 this.descriptions[i].text,
                 this.entity.position.x -
                     first.width / 2 +
                     this.entity.size.x / 2,
-                this.entity.position.y - h + i * first.height + first.height - 10
+                this.entity.position.y -
+                    h +
+                    i * first.height +
+                    first.height -
+                    10
             );
         }
     }
