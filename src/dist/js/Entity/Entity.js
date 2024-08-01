@@ -12,6 +12,7 @@ class Entity {
         this.health = 1;
         this.maxHealth = 100;
         this.holding = null;
+        this.inventory = new Inventory(this, { maxSize: 10, size: 0 });
     }
     draw() { }
     update(deltaTime) {

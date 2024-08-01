@@ -1,8 +1,8 @@
 class PickupHint extends Hint {
     entity: Entity;
-    item: Item;
+    item: Item | LootBox;
 
-    constructor(item: Item, entity: Entity, descriptionArr: string[], size: number) {
+    constructor(item: Item | LootBox, entity: Entity, descriptionArr: string[], size: number) {
         super(descriptionArr, size);
         this.descriptionArr = descriptionArr;
         this.size = size;

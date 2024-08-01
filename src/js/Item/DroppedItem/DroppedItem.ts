@@ -2,7 +2,7 @@ class DroppedItem extends Entity {
     position: Vector;
     size: Vector;
     options: EntityOptions;
-    itemData: Item;
+    itemData: Item | LootBox;
     img: HTMLImageElement;
     autoPickup: boolean;
 
@@ -12,7 +12,7 @@ class DroppedItem extends Entity {
         position: Vector,
         size: Vector,
         options: EntityOptions,
-        itemData: Item,
+        itemData: Item | LootBox,
         autoPickup: boolean
     ) {
         super(position, size, options);

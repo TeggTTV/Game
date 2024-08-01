@@ -47,7 +47,7 @@ class Monster extends Entity {
         ).normalize();
         this.vel = this.vel.add(Vector.mul(direction, this.acceleration));
     }
-    drop(item: Item): void {
+    drop(item: Item | LootBox): void {
         let newDroppedItem = new DroppedItem(
             new Vector(
                 this.position.x + this.size.x / 2 - 15,
@@ -75,8 +75,12 @@ class Monster extends Entity {
                 return;
             }
             for (let drop of this.options.drops.possibleDrops) {
-                let random = Math.random() * drop.chance;
-                console.log(random);
+                let random = Math.random() * 1;
+                if(random > drop.chance) {
+                    this.drop(drop.item);
+                    console.log(drop.item);
+                    
+                }
             }
         }
     }

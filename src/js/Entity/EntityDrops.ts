@@ -1,6 +1,6 @@
 type PossibleDrop = {
     chance: number;
-    item: Item;
+    item: Item | LootBox;
 }
 
 class EntityDrops {

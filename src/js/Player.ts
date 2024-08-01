@@ -69,13 +69,24 @@ class Player {
         // this.img = this.imgLoader.getImage("Player");
     }
     equip(item: Item) {
-        this.inventory.hotbar.setSlot(
-            item,
-            item.quantity,
-            this.inventory.hotbar.nextAvailableSlot()
-        );
+        console.log(item);
+        
+        if (item instanceof Ammo) {            
+            if (this.inventory.reserveAmmo[item.caliber] > 0) {
+                this.inventory.reserveAmmo[item.caliber] += item.quantity;
+            } else {
+                this.inventory.reserveAmmo[item.caliber] = item.quantity;
+            }
+        } else if (item instanceof Gun) {
+            this.inventory.hotbar.setSlot(
+                item,
+                item.quantity,
+                this.inventory.hotbar.nextAvailableSlot()
+            );
+            this.inventory.add(item);
 
-        this.holding = item;
+            // this.holding = item;
+        }
     }
     draw() {
         // ctx.drawImage(this.img, this.x, this.y, tileWidth, tileHeight);
@@ -94,6 +105,25 @@ class Player {
         this.checkMouse();
         this.vel = this.vel.mul(0.9);
         this.position = this.position.add(this.vel.mul(deltaTime));
+
+        // make all reserve ammo the same for all of the same ammo type on guns
+        // for (let item of this.inventory.getItems()) {
+        //     let dict: { [key: string]: number } = {};
+        //     if(item instanceof Gun)
+        //         if(!dict[item.gunLore.caliber]) {
+        //             dict[item.gunLore.caliber] =
+        //         }
+
+        //     console.log(dict);
+
+        // }
+
+        // console.log(
+        //     this.inventory
+        //         .getItems()
+        //         .filter((item) => item instanceof Gun)
+        //         .map((item) => this.inventory.reserveAmmo[item.gunLore.caliber])
+        // );
 
         // if (this.placingTile) {
         // }
@@ -134,15 +164,29 @@ class Player {
             if (collidedWith) return;
             if (obj instanceof DroppedItem) {
                 if (colCheck(this, obj, false)) {
-                    if(obj.autoPickup) {
+                    if (obj.autoPickup && obj.itemData instanceof Item) {
                         let item = obj.itemData;
                         this.equip(item);
                         item.owner = this;
-                        
+
+                        obj.delete();
+                        return;
+                    } else if (
+                        obj.autoPickup &&
+                        obj.itemData instanceof LootBox
+                    ) {
+                        let lootBox = obj.itemData;
+                        let items = lootBox.open();
+                        for (let item of items) {
+                            this.equip(item);
+                            item.owner = this;
+                        }
+
                         obj.delete();
                         return;
                     }
                     collidedWith = true;
+
                     if (obj.itemData instanceof Gun) {
                         return {
                             hint: new PickupHint(
@@ -153,6 +197,20 @@ class Player {
                             ),
                             original: obj,
                         };
+                    } else if (obj.itemData instanceof LootBox) {
+                        if (obj.itemData.items.length === 1)
+                            return {
+                                hint: new PickupHint(
+                                    obj.itemData,
+                                    obj,
+                                    [
+                                        "F to Pickup " +
+                                            obj.itemData.items[0].name,
+                                    ],
+                                    20
+                                ),
+                                original: obj,
+                            };
                     }
                 }
             }
@@ -167,7 +225,7 @@ class Player {
                             mouse.x + camera.position.x,
                             mouse.y + camera.position.y
                         );
-                    else {                                                                          
+                    else {
                         this.holding.reload();
                     }
                 }
@@ -214,12 +272,24 @@ class Player {
                 this.activPickupHint.hint &&
                 this.activPickupHint.original instanceof DroppedItem
             ) {
-                let item = this.activPickupHint.hint.item;
-                this.equip(item);
-                item.owner = this;
+                if (this.activPickupHint.hint.item instanceof Gun) {
+                    let item = this.activPickupHint.hint.item;
+                    this.equip(item);
+                    item.owner = this;
 
-                this.activPickupHint.original.delete();
-                this.activPickupHint = { hint: null, original: null };
+                    this.activPickupHint.original.delete();
+                    this.activPickupHint = { hint: null, original: null };
+                } else if (this.activPickupHint.hint.item instanceof LootBox) {
+                    let lootBox = this.activPickupHint.hint.item;
+                    let items = lootBox.open();
+                    for (let item of items) {
+                        this.equip(item);
+                        item.owner = this;
+                    }
+
+                    this.activPickupHint.original.delete();
+                    this.activPickupHint = { hint: null, original: null };
+                }
             }
 
             keys["f"] = false;
@@ -234,7 +304,7 @@ class Player {
                 }
             }
         }
-            
+
         if (keys[" "]) {
             for (let monster of entities) {
                 if (monster instanceof Monster) {

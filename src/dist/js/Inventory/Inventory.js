@@ -5,8 +5,15 @@ class Inventory {
         this.items = [];
         this.owner = owner;
         this.hotbar = new Hotbar(this.owner);
+        this.reserveAmmo = {};
     }
     add(item) {
+        if (item instanceof Gun) {
+            if (!this.reserveAmmo[item.gunLore.caliber]) {
+                this.reserveAmmo[item.gunLore.caliber] = 0;
+            }
+            this.reserveAmmo[item.gunLore.caliber] += item.gunOptions.customs.ammo;
+        }
         this.items.push(item);
     }
     remove(item) {

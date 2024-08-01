@@ -29,11 +29,15 @@ let testEnemy = new Monster(new Vector(10 * tileWidth, 10 * tileHeight), new Vec
     customs: new EntityCustoms(20, 20, 10),
     drops: new EntityDrops([
         {
-            chance: 1,
-            item: new Gun(null, "AK-47", GunType.FullAuto, {
-                imgPath: BaseAK47.imgPath,
-                customs: new GunCustoms(1200, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
-            }, GunLores["AK-47"]),
+            chance: 0,
+            item: new LootBox([
+                LootBox.randomLootBox([
+                    {
+                        item: new Ammo(GunLores["AK-47"].caliber, GunLores["AK-47"].caliber, 1, "assets/images/green.png"),
+                        quantityRange: [30, 60],
+                    },
+                ]),
+            ]),
         },
     ]),
 });
@@ -50,7 +54,7 @@ function init() {
         entities.push(testEnemy);
         player.equip(new Gun(player, "AK-47", GunType.FullAuto, {
             imgPath: BaseAK47.imgPath,
-            customs: new GunCustoms(1200, 100, 0.1, 10, 0, 2, 30, 90, false, 10, 1, 5),
+            customs: new GunCustoms(1200, 100, 0.1, 10, 0, 2, 30, false, 10, 1, 5),
         }, GunLores["AK-47"]));
         droppedItems.push(new DroppedItem(new Vector(10 * tileWidth, 7 * tileHeight), new Vector(-1, -1), {
             imgPath: "assets/images/guns/Beretta M9 2D.png",
@@ -62,7 +66,7 @@ function init() {
             drops: null,
         }, new Gun(null, "M9", GunType.SemiAuto, {
             imgPath: BaseM9.imgPath,
-            customs: new GunCustoms(2000, 100, 0.01, 10, 0, 2, 9, 40, false, 10, 1, 5),
+            customs: new GunCustoms(200, 100, 0.05, 10, 0, 2, 9, false, 10, 1, 5),
         }, GunLores["Beretta M9"]), true));
         game = new Game();
         window.requestAnimationFrame(render);
@@ -85,7 +89,9 @@ function render() {
         if (playerColDroppedItem) {
             player.activPickupHint = playerColDroppedItem;
         }
-        else if (!playerColDroppedItem && player.activPickupHint.original instanceof Entity && !player.colCheck(player.activPickupHint.original)) {
+        else if (!playerColDroppedItem &&
+            player.activPickupHint.original instanceof Entity &&
+            !player.colCheck(player.activPickupHint.original)) {
             player.activPickupHint = { hint: null, original: null };
         }
     });
@@ -125,7 +131,9 @@ function render() {
         ctx.fillText("Ammo: " +
             player.holding.gunOptions.customs.ammo +
             "/" +
-            player.holding.gunOptions.customs.reserveAmmo + " / caliber=" + player.holding.gunLore.caliber, 10, 60);
+            player.inventory.reserveAmmo[player.holding.gunLore.caliber] +
+            " / caliber=" +
+            player.holding.gunLore.caliber, 10, 60);
         if (player.holding.gunOptions.customs.reloading) {
             ctx.fillStyle = "red";
             ctx.fillText("Reloading", 10, 90);

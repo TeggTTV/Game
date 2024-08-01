@@ -30,30 +30,20 @@ let testEnemy: Monster = new Monster(
         customs: new EntityCustoms(20, 20, 10),
         drops: new EntityDrops([
             {
-                chance: 1,
-                item: new Gun(
-                    null,
-                    "AK-47",
-                    GunType.FullAuto,
-                    {
-                        imgPath: BaseAK47.imgPath,
-                        customs: new GunCustoms(
-                            1200,
-                            100,
-                            0.01,
-                            10,
-                            0,
-                            2,
-                            30,
-                            90,
-                            false,
-                            10,
-                            1,
-                            5
-                        ),
-                    },
-                    GunLores["AK-47"],
-                ),
+                chance: 0,
+                item: new LootBox([
+                    LootBox.randomLootBox([
+                        {
+                            item: new Ammo(
+                                GunLores["AK-47"].caliber,
+                                GunLores["AK-47"].caliber,
+                                1,
+                                "assets/images/green.png"
+                            ),
+                            quantityRange: [30, 60],
+                        },
+                    ]),
+                ]),
             },
         ]),
     }
@@ -76,7 +66,7 @@ async function init() {
     );
 
     entities.push(testEnemy);
-    
+
     player.equip(
         new Gun(
             player,
@@ -92,14 +82,13 @@ async function init() {
                     0,
                     2,
                     30,
-                    90,
                     false,
                     10,
                     1,
                     5
                 ),
             },
-            GunLores["AK-47"],
+            GunLores["AK-47"]
         )
     );
     // player.setHolding(player.inventory.getItems()[0]);
@@ -124,21 +113,20 @@ async function init() {
                 {
                     imgPath: BaseM9.imgPath,
                     customs: new GunCustoms(
-                        2000,
+                        200,
                         100,
-                        0.01,
+                        0.05,
                         10,
                         0,
                         2,
                         9,
-                        40,
                         false,
                         10,
                         1,
                         5
                     ),
                 },
-                GunLores["Beretta M9"],
+                GunLores["Beretta M9"]
             ),
             true
         )
@@ -171,10 +159,14 @@ function render() {
         droppedItem.update();
 
         let playerColDroppedItem = player.colCheck(droppedItem);
-        if(playerColDroppedItem) {
+        if (playerColDroppedItem) {
             player.activPickupHint = playerColDroppedItem;
-        } else if(!playerColDroppedItem && player.activPickupHint.original instanceof Entity && !player.colCheck(player.activPickupHint.original)) {
-            player.activPickupHint = {hint: null, original: null};
+        } else if (
+            !playerColDroppedItem &&
+            player.activPickupHint.original instanceof Entity &&
+            !player.colCheck(player.activPickupHint.original)
+        ) {
+            player.activPickupHint = { hint: null, original: null };
         }
     });
 
@@ -182,7 +174,7 @@ function render() {
         entity.draw();
         entity.update(deltaTime);
     });
-    
+
     projectiles.forEach((projectile: any) => {
         projectile.draw();
         projectile.update(deltaTime);
@@ -229,13 +221,15 @@ function render() {
     ctx.fillStyle = "black";
     ctx.font = "30px Arial";
     ctx.fillText("Health: " + player.health, 10, 30);
-    
+
     if (player.holding instanceof Gun) {
         ctx.fillText(
             "Ammo: " +
                 player.holding.gunOptions.customs.ammo +
                 "/" +
-                player.holding.gunOptions.customs.reserveAmmo + " / caliber=" + player.holding.gunLore.caliber,
+                player.inventory.reserveAmmo[player.holding.gunLore.caliber] +
+                " / caliber=" +
+                player.holding.gunLore.caliber,
             10,
             60
         );
@@ -247,8 +241,8 @@ function render() {
     }
 
     let slotTxt = "";
-    for(let slot of player.inventory.hotbar.slots) {
-        if(slot) {
+    for (let slot of player.inventory.hotbar.slots) {
+        if (slot) {
             slotTxt += slot.item?.name + " | ";
         }
     }

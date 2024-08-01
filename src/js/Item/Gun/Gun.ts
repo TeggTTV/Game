@@ -44,7 +44,7 @@ class Gun extends Item {
             imgPath: string;
             customs: GunCustoms;
         },
-        gunLore: any,
+        gunLore: any
     ) {
         super(owner, name, 1);
         this.name = name;
@@ -104,64 +104,88 @@ class Gun extends Item {
     reload() {
         if (
             this.gunOptions.customs.reloading ||
-            this.gunOptions.customs.reserveAmmo === 0
+            this.owner?.inventory.reserveAmmo[this.gunLore.caliber] === 0
         )
             return;
+
         this.gunOptions.customs.reloading = true;
 
-        if (
-            this.gunOptions.customs.ammo <
-                this.gunOptions.customs.magazineSize ||
-            (this.gunOptions.customs.ammo ===
-                this.gunOptions.customs.magazineSize &&
-                this.gunOptions.customs.reserveAmmo > 0)
-        ) {
-            new Timer(
-                0,
-                this.gunOptions.customs.reloadTime,
-                1,
-                true,
-                () => {
-                    // do nothing
-                },
-                () => {
-                    if (this.owner?.holding instanceof Gun) {
-                        let neededAmmo =
-                            this.gunOptions.customs.magazineSize -
-                            this.gunOptions.customs.ammo;
+        if (this.owner instanceof Player || this.owner instanceof Entity)
+            if (
+                this.gunOptions.customs.ammo <
+                    this.gunOptions.customs.magazineSize ||
+                (this.gunOptions.customs.ammo ===
+                    this.gunOptions.customs.magazineSize &&
+                    this.owner.inventory.reserveAmmo[this.gunLore.caliber] > 0)
+            ) {
+                
+                new Timer(
+                    0,
+                    this.gunOptions.customs.reloadTime,
+                    1,
+                    true,
+                    () => {
+                        // do nothing
+                    },
+                    () => {
+                        console.log("Reloaded");
+                        
+                        if (this.owner?.holding instanceof Gun) {
+                            let neededAmmo =
+                                this.gunOptions.customs.magazineSize -
+                                this.gunOptions.customs.ammo;
 
-                        if (this.gunOptions.customs.reserveAmmo > neededAmmo) {
-                            if (this.gunOptions.customs.ammo >= 1) {
-                                this.gunOptions.customs.ammo += neededAmmo + 1;
-                                this.gunOptions.customs.reserveAmmo -=
-                                    neededAmmo + 1;
-                            } else {
+                            if (
+                                this.owner.inventory.reserveAmmo[
+                                    this.gunLore.caliber
+                                ] > neededAmmo
+                            ) {
+                                if (this.gunOptions.customs.ammo >= 1) {
+                                    this.gunOptions.customs.ammo +=
+                                        neededAmmo + 1;
+                                    this.owner.inventory.reserveAmmo[
+                                        this.gunLore.caliber
+                                    ] -= neededAmmo + 1;
+                                } else {
+                                    this.gunOptions.customs.ammo += neededAmmo;
+                                    this.owner.inventory.reserveAmmo[
+                                        this.gunLore.caliber
+                                    ] -= neededAmmo;
+                                } // 27 / 3
+                            } else if (
+                                this.gunOptions.customs.ammo ===
+                                    this.gunOptions.customs.magazineSize &&
+                                this.owner.inventory.reserveAmmo[
+                                    this.gunLore.caliber
+                                ] > 0
+                            ) {
+                                this.gunOptions.customs.ammo++;
+                                this.owner.inventory.reserveAmmo[
+                                    this.gunLore.caliber
+                                ]--;
+                            } else if (
+                                this.owner.inventory.reserveAmmo[
+                                    this.gunLore.caliber
+                                ] === neededAmmo
+                            ) {
                                 this.gunOptions.customs.ammo += neededAmmo;
-                                this.gunOptions.customs.reserveAmmo -=
-                                    neededAmmo;
-                            } // 27 / 3
-                        } else if (
-                            this.gunOptions.customs.ammo ===
-                                this.gunOptions.customs.magazineSize &&
-                            this.gunOptions.customs.reserveAmmo > 0
-                        ) {
-                            this.gunOptions.customs.ammo++;
-                            this.gunOptions.customs.reserveAmmo--;
-                        } else if (
-                            this.gunOptions.customs.reserveAmmo === neededAmmo
-                        ) {
-                            this.gunOptions.customs.ammo += neededAmmo;
-                            this.gunOptions.customs.reserveAmmo -= neededAmmo;
-                        } else {
-                            this.gunOptions.customs.ammo +=
-                                this.gunOptions.customs.reserveAmmo;
-                            this.gunOptions.customs.reserveAmmo = 0;
+                                this.owner.inventory.reserveAmmo[
+                                    this.gunLore.caliber
+                                ] -= neededAmmo;
+                            } else {
+                                this.gunOptions.customs.ammo +=
+                                    this.owner.inventory.reserveAmmo[
+                                        this.gunLore.caliber
+                                    ];
+                                this.owner.inventory.reserveAmmo[
+                                    this.gunLore.caliber
+                                ] = 0;
+                            }
                         }
+                        this.gunOptions.customs.reloading = false;
                     }
-                    this.gunOptions.customs.reloading = false;
-                }
-            );
-        }
+                );
+            }
     }
 
     draw() {
@@ -215,7 +239,7 @@ class Gun extends Item {
         return new Vector(Math.cos(newAngle), Math.sin(newAngle));
     }
     async shoot(mouseX: number, mouseY: number) {
-        if(this.gunOptions.customs.reloading) return;
+        if (this.gunOptions.customs.reloading) return;
         if (this.owner instanceof Player || this.owner instanceof Entity) {
             let roundsPerMillsec =
                 1 / (this.gunOptions.customs.roundsPerMinute / 60);
@@ -252,10 +276,9 @@ class Gun extends Item {
                 await wait(roundsPerMillsec);
 
                 this.shotFirstBullet = true;
-            } else if (this.shotFirstBullet && this.type !== GunType.SemiAuto) { 
+            } else if (this.shotFirstBullet && this.type !== GunType.SemiAuto) {
                 this.firing = true;
                 this.fireTimer += deltaTime;
-
 
                 if (this.fireTimer >= roundsPerMillsec) {
                     projectiles.push(bullet);

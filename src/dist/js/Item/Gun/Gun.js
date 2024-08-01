@@ -54,52 +54,54 @@ class Gun extends Item {
         }, 1000 / 60);
     }
     reload() {
+        var _a;
         if (this.gunOptions.customs.reloading ||
-            this.gunOptions.customs.reserveAmmo === 0)
+            ((_a = this.owner) === null || _a === void 0 ? void 0 : _a.inventory.reserveAmmo[this.gunLore.caliber]) === 0)
             return;
         this.gunOptions.customs.reloading = true;
-        if (this.gunOptions.customs.ammo <
-            this.gunOptions.customs.magazineSize ||
-            (this.gunOptions.customs.ammo ===
-                this.gunOptions.customs.magazineSize &&
-                this.gunOptions.customs.reserveAmmo > 0)) {
-            new Timer(0, this.gunOptions.customs.reloadTime, 1, true, () => {
-            }, () => {
-                var _a;
-                if (((_a = this.owner) === null || _a === void 0 ? void 0 : _a.holding) instanceof Gun) {
-                    let neededAmmo = this.gunOptions.customs.magazineSize -
-                        this.gunOptions.customs.ammo;
-                    if (this.gunOptions.customs.reserveAmmo > neededAmmo) {
-                        if (this.gunOptions.customs.ammo >= 1) {
-                            this.gunOptions.customs.ammo += neededAmmo + 1;
-                            this.gunOptions.customs.reserveAmmo -=
-                                neededAmmo + 1;
+        if (this.owner instanceof Player || this.owner instanceof Entity)
+            if (this.gunOptions.customs.ammo <
+                this.gunOptions.customs.magazineSize ||
+                (this.gunOptions.customs.ammo ===
+                    this.gunOptions.customs.magazineSize &&
+                    this.owner.inventory.reserveAmmo[this.gunLore.caliber] > 0)) {
+                new Timer(0, this.gunOptions.customs.reloadTime, 1, true, () => {
+                }, () => {
+                    var _a;
+                    console.log("Reloaded");
+                    if (((_a = this.owner) === null || _a === void 0 ? void 0 : _a.holding) instanceof Gun) {
+                        let neededAmmo = this.gunOptions.customs.magazineSize -
+                            this.gunOptions.customs.ammo;
+                        if (this.owner.inventory.reserveAmmo[this.gunLore.caliber] > neededAmmo) {
+                            if (this.gunOptions.customs.ammo >= 1) {
+                                this.gunOptions.customs.ammo +=
+                                    neededAmmo + 1;
+                                this.owner.inventory.reserveAmmo[this.gunLore.caliber] -= neededAmmo + 1;
+                            }
+                            else {
+                                this.gunOptions.customs.ammo += neededAmmo;
+                                this.owner.inventory.reserveAmmo[this.gunLore.caliber] -= neededAmmo;
+                            }
+                        }
+                        else if (this.gunOptions.customs.ammo ===
+                            this.gunOptions.customs.magazineSize &&
+                            this.owner.inventory.reserveAmmo[this.gunLore.caliber] > 0) {
+                            this.gunOptions.customs.ammo++;
+                            this.owner.inventory.reserveAmmo[this.gunLore.caliber]--;
+                        }
+                        else if (this.owner.inventory.reserveAmmo[this.gunLore.caliber] === neededAmmo) {
+                            this.gunOptions.customs.ammo += neededAmmo;
+                            this.owner.inventory.reserveAmmo[this.gunLore.caliber] -= neededAmmo;
                         }
                         else {
-                            this.gunOptions.customs.ammo += neededAmmo;
-                            this.gunOptions.customs.reserveAmmo -=
-                                neededAmmo;
+                            this.gunOptions.customs.ammo +=
+                                this.owner.inventory.reserveAmmo[this.gunLore.caliber];
+                            this.owner.inventory.reserveAmmo[this.gunLore.caliber] = 0;
                         }
                     }
-                    else if (this.gunOptions.customs.ammo ===
-                        this.gunOptions.customs.magazineSize &&
-                        this.gunOptions.customs.reserveAmmo > 0) {
-                        this.gunOptions.customs.ammo++;
-                        this.gunOptions.customs.reserveAmmo--;
-                    }
-                    else if (this.gunOptions.customs.reserveAmmo === neededAmmo) {
-                        this.gunOptions.customs.ammo += neededAmmo;
-                        this.gunOptions.customs.reserveAmmo -= neededAmmo;
-                    }
-                    else {
-                        this.gunOptions.customs.ammo +=
-                            this.gunOptions.customs.reserveAmmo;
-                        this.gunOptions.customs.reserveAmmo = 0;
-                    }
-                }
-                this.gunOptions.customs.reloading = false;
-            });
-        }
+                    this.gunOptions.customs.reloading = false;
+                });
+            }
     }
     draw() {
         ctx.save();

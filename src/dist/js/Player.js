@@ -39,8 +39,19 @@ class Player {
         });
     }
     equip(item) {
-        this.inventory.hotbar.setSlot(item, item.quantity, this.inventory.hotbar.nextAvailableSlot());
-        this.holding = item;
+        console.log(item);
+        if (item instanceof Ammo) {
+            if (this.inventory.reserveAmmo[item.caliber] > 0) {
+                this.inventory.reserveAmmo[item.caliber] += item.quantity;
+            }
+            else {
+                this.inventory.reserveAmmo[item.caliber] = item.quantity;
+            }
+        }
+        else if (item instanceof Gun) {
+            this.inventory.hotbar.setSlot(item, item.quantity, this.inventory.hotbar.nextAvailableSlot());
+            this.inventory.add(item);
+        }
     }
     draw() {
         ctx.fillStyle = "black";
@@ -94,10 +105,21 @@ class Player {
                 return;
             if (obj instanceof DroppedItem) {
                 if (colCheck(this, obj, false)) {
-                    if (obj.autoPickup) {
+                    if (obj.autoPickup && obj.itemData instanceof Item) {
                         let item = obj.itemData;
                         this.equip(item);
                         item.owner = this;
+                        obj.delete();
+                        return;
+                    }
+                    else if (obj.autoPickup &&
+                        obj.itemData instanceof LootBox) {
+                        let lootBox = obj.itemData;
+                        let items = lootBox.open();
+                        for (let item of items) {
+                            this.equip(item);
+                            item.owner = this;
+                        }
                         obj.delete();
                         return;
                     }
@@ -107,6 +129,16 @@ class Player {
                             hint: new PickupHint(obj.itemData, obj, ["F to Pickup " + obj.itemData.gunLore.name], 20),
                             original: obj,
                         };
+                    }
+                    else if (obj.itemData instanceof LootBox) {
+                        if (obj.itemData.items.length === 1)
+                            return {
+                                hint: new PickupHint(obj.itemData, obj, [
+                                    "F to Pickup " +
+                                        obj.itemData.items[0].name,
+                                ], 20),
+                                original: obj,
+                            };
                     }
                 }
             }
@@ -159,11 +191,23 @@ class Player {
         if (keys["f"]) {
             if (this.activPickupHint.hint &&
                 this.activPickupHint.original instanceof DroppedItem) {
-                let item = this.activPickupHint.hint.item;
-                this.equip(item);
-                item.owner = this;
-                this.activPickupHint.original.delete();
-                this.activPickupHint = { hint: null, original: null };
+                if (this.activPickupHint.hint.item instanceof Gun) {
+                    let item = this.activPickupHint.hint.item;
+                    this.equip(item);
+                    item.owner = this;
+                    this.activPickupHint.original.delete();
+                    this.activPickupHint = { hint: null, original: null };
+                }
+                else if (this.activPickupHint.hint.item instanceof LootBox) {
+                    let lootBox = this.activPickupHint.hint.item;
+                    let items = lootBox.open();
+                    for (let item of items) {
+                        this.equip(item);
+                        item.owner = this;
+                    }
+                    this.activPickupHint.original.delete();
+                    this.activPickupHint = { hint: null, original: null };
+                }
             }
             keys["f"] = false;
         }

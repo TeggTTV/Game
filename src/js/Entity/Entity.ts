@@ -17,6 +17,8 @@ class Entity {
 
     holding: Item | null = null;
 
+    inventory: Inventory;
+
     constructor(position: Vector, size: Vector, options: EntityOptions) {
         this.position = position;
         this.size = size;
@@ -32,6 +34,8 @@ class Entity {
         this.maxHealth = 100;
 
         this.holding = null;
+
+        this.inventory = new Inventory(this, { maxSize: 10, size: 0 });
     }
     draw() {}
     update(deltaTime: number) {

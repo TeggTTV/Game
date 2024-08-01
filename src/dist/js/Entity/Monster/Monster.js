@@ -49,8 +49,11 @@ class Monster extends Entity {
                 return;
             }
             for (let drop of this.options.drops.possibleDrops) {
-                let random = Math.random() * drop.chance;
-                console.log(random);
+                let random = Math.random() * 1;
+                if (random > drop.chance) {
+                    this.drop(drop.item);
+                    console.log(drop.item);
+                }
             }
         }
     }
