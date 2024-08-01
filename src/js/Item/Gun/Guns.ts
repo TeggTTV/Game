@@ -9,7 +9,7 @@ let BaseAK47 = {
 };
 
 let BaseM9 = {
-    imgPath: "assets/images/guns/M9.png",
+    imgPath: "assets/images/guns/Beretta M9 Top.png",
     customs: new GunCustoms(1, 100, 0.01, 10, 0, 2, 30, 90, false, 10, 1, 5),
     attatchments: {}
 };

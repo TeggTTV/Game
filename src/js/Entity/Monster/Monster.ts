@@ -63,7 +63,8 @@ class Monster extends Entity {
                 drops: null,
                 imgPath: "assets/images/yellow.png",
             },
-            item
+            item,
+            false
         );
         droppedItems.push(newDroppedItem);
     }

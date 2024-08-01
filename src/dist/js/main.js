@@ -52,8 +52,8 @@ function init() {
             imgPath: BaseAK47.imgPath,
             customs: new GunCustoms(1200, 100, 0.1, 10, 0, 2, 30, 90, false, 10, 1, 5),
         }, GunLores["AK-47"]));
-        droppedItems.push(new DroppedItem(new Vector(10 * tileWidth, 7 * tileHeight), new Vector(30, 30), {
-            imgPath: "assets/images/yellow.png",
+        droppedItems.push(new DroppedItem(new Vector(10 * tileWidth, 7 * tileHeight), new Vector(-1, -1), {
+            imgPath: "assets/images/guns/Beretta M9 2D.png",
             customs: {
                 health: null,
                 maxHealth: null,
@@ -61,9 +61,9 @@ function init() {
             },
             drops: null,
         }, new Gun(null, "M9", GunType.SemiAuto, {
-            imgPath: BaseAK47.imgPath,
+            imgPath: BaseM9.imgPath,
             customs: new GunCustoms(2000, 100, 0.01, 10, 0, 2, 9, 40, false, 10, 1, 5),
-        }, GunLores["Beretta M9"])));
+        }, GunLores["Beretta M9"]), true));
         game = new Game();
         window.requestAnimationFrame(render);
     });

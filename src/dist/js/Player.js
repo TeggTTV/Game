@@ -94,6 +94,13 @@ class Player {
                 return;
             if (obj instanceof DroppedItem) {
                 if (colCheck(this, obj, false)) {
+                    if (obj.autoPickup) {
+                        let item = obj.itemData;
+                        this.equip(item);
+                        item.owner = this;
+                        obj.delete();
+                        return;
+                    }
                     collidedWith = true;
                     if (obj.itemData instanceof Gun) {
                         return {
@@ -112,7 +119,6 @@ class Player {
                     if (this.holding.gunOptions.customs.ammo > 0)
                         this.holding.shoot(mouse.x + camera.position.x, mouse.y + camera.position.y);
                     else {
-                        console.log("Out of ammo");
                         this.holding.reload();
                     }
                 }
@@ -202,7 +208,7 @@ class Player {
                     speed: null,
                 },
                 drops: null,
-            }, this.holding);
+            }, this.holding, true);
             droppedItems.push(newDroppedItem);
             this.holding = null;
         }
