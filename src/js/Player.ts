@@ -228,7 +228,7 @@ class Player {
                 }
             }
         }
-
+            
         if (keys[" "]) {
             for (let monster of entities) {
                 if (monster instanceof Monster) {
