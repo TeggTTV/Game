@@ -14,7 +14,8 @@ class Tile {
         this.barrier = barrier;
     }
     draw() {
-        ctx.drawImage(this.img, this.position.x, this.position.y, tileWidth, tileHeight);
+        if (this.img)
+            ctx.drawImage(this.img, this.position.x, this.position.y, tileWidth, tileHeight);
         this.checkHover();
     }
     update() {
@@ -59,7 +60,7 @@ class Tile {
 class TileZone extends Tile {
     constructor(position, img) {
         super(position, img);
-        this.hoverHint = new HoverHint(["Zone"], 20, 0.2);
+        this.hoverHint = new HoverHint([{ text: "Zone", centered: false }], 15, 0.2);
         this.type = null;
     }
     setType(type) {
@@ -68,7 +69,8 @@ class TileZone extends Tile {
     draw() {
         if (!zonesVisible)
             return;
-        ctx.drawImage(this.img, this.position.x, this.position.y, tileWidth, tileHeight);
+        if (this.img)
+            ctx.drawImage(this.img, this.position.x, this.position.y, tileWidth, tileHeight);
         this.checkHover();
     }
 }

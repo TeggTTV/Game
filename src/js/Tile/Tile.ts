@@ -1,6 +1,6 @@
 class Tile {
     position: Vector;
-    img: CanvasImageSource;
+    img: HTMLImageElement | null;
     hoverHint: HoverHint | undefined;
     firstHover: boolean;
     hovering: boolean;
@@ -9,7 +9,7 @@ class Tile {
 
     size: Vector;
 
-    constructor(position: Vector, img: CanvasImageSource) {
+    constructor(position: Vector, img: HTMLImageElement | null) {
         this.position = position;
         this.img = img;
         this.hoverHint = undefined;
@@ -20,20 +20,25 @@ class Tile {
         this.barrier = false;
 
         this.size = new Vector(tileWidth, tileHeight);
-
     }
     setBarrier(barrier: boolean) {
         this.barrier = barrier;
     }
     draw() {
         // ctx.strokeRect(this.x, this.y, tileWidth, tileHeight);
-        ctx.drawImage(this.img, this.position.x, this.position.y, tileWidth, tileHeight);
+        if (this.img)
+            ctx.drawImage(
+                this.img,
+                this.position.x,
+                this.position.y,
+                tileWidth,
+                tileHeight
+            );
         this.checkHover();
         // if (this.barrier) this.barrier.draw();
     }
-    update(
-        // delta: number
-    ) {
+    update() // delta: number
+    {
         // if (this.barrier) this.barrier.update(this.x, this.y);
     }
     drawHoverHint() {
@@ -82,9 +87,9 @@ class Tile {
 
 class TileZone extends Tile {
     type: string | null;
-    constructor(position: Vector, img: CanvasImageSource) {
+    constructor(position: Vector, img: HTMLImageElement | null) {
         super(position, img);
-        this.hoverHint = new HoverHint(["Zone"], 20, 0.2);
+        this.hoverHint = new HoverHint([{ text: "Zone", centered: false}], 15, 0.2);
         this.type = null;
     }
     setType(type: string) {
@@ -92,7 +97,14 @@ class TileZone extends Tile {
     }
     draw() {
         if (!zonesVisible) return;
-        ctx.drawImage(this.img, this.position.x, this.position.y, tileWidth, tileHeight);
+        if(this.img)
+        ctx.drawImage(
+            this.img,
+            this.position.x,
+            this.position.y,
+            tileWidth,
+            tileHeight
+        );
         this.checkHover();
     }
 }

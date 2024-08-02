@@ -2,18 +2,28 @@ class HoverHint extends Hint {
     delay: number;
     canDraw: boolean;
     timerStarted: boolean;
-    constructor(descriptionArr: string[], size: number, delay: number = 0) {
+    constructor(
+        descriptionArr: {
+            text: string;
+            centered: boolean;
+        }[],
+        size: number,
+        delay: number = 0
+    ) {
         super(descriptionArr, size);
         this.descriptionArr = descriptionArr;
         this.descriptions = [];
+
         for (let i = 0; i < descriptionArr.length; i++) {
-            ctx.font = "20px Arial";
-            let w = ctx.measureText(descriptionArr[i]).width;
+            ctx.font = this.size + "px Arial";
+            let w = ctx.measureText(descriptionArr[i].text).width;
             let h =
-                ctx.measureText(descriptionArr[i]).actualBoundingBoxAscent +
-                ctx.measureText(descriptionArr[i]).actualBoundingBoxDescent;
+                ctx.measureText(descriptionArr[i].text)
+                    .actualBoundingBoxAscent +
+                ctx.measureText(descriptionArr[i].text)
+                    .actualBoundingBoxDescent;
             this.descriptions.push({
-                text: descriptionArr[i],
+                text: descriptionArr[i].text,
                 width: w,
                 height: h,
             });
@@ -58,7 +68,7 @@ class HoverHint extends Hint {
         );
 
         ctx.fillStyle = "white";
-        ctx.font = "20px Arial";
+        ctx.font = this.size + "px Arial";
         for (let i = 0; i < this.descriptions.length; i++) {
             ctx.fillText(
                 this.descriptions[i].text,

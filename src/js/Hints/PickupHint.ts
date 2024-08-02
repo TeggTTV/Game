@@ -2,7 +2,10 @@ class PickupHint extends Hint {
     entity: Entity;
     item: Item | LootBox;
 
-    constructor(item: Item | LootBox, entity: Entity, descriptionArr: string[], size: number) {
+    constructor(item: Item | LootBox, entity: Entity, descriptionArr: {
+        text: string;
+        centered: boolean;
+    }[], size: number) {
         super(descriptionArr, size);
         this.descriptionArr = descriptionArr;
         this.size = size;
@@ -13,13 +16,13 @@ class PickupHint extends Hint {
 
         this.descriptions = [];
         for (let i = 0; i < descriptionArr.length; i++) {
-            ctx.font = "20px Arial";
-            let w = ctx.measureText(descriptionArr[i]).width;
+            ctx.font = this.size + "px Arial";
+            let w = ctx.measureText(descriptionArr[i].text).width;
             let h =
-                ctx.measureText(descriptionArr[i]).actualBoundingBoxAscent +
-                ctx.measureText(descriptionArr[i]).actualBoundingBoxDescent;
+                ctx.measureText(descriptionArr[i].text).actualBoundingBoxAscent +
+                ctx.measureText(descriptionArr[i].text).actualBoundingBoxDescent;
             this.descriptions.push({
-                text: descriptionArr[i],
+                text: descriptionArr[i].text,
                 width: w,
                 height: h,
             });
@@ -31,25 +34,8 @@ class PickupHint extends Hint {
 
         let h = first.height * this.descriptionArr.length;
 
-        // let maxWidth = Math.max(...this.descriptions.map((d) => d.width));
-
-        // let background = {
-        //     x: this.entity.position.x - this.entity.size.x - margin,
-        //     y: this.entity.position.y - margin*2 - h - margin,
-        //     width: maxWidth,
-        //     height: h,
-        // };
-
-        // ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
-        // ctx.fillRect(
-        //     background.x + maxWidth / 2,
-        //     background.y,
-        //     background.width + margin * 2,
-        //     background.height + margin * 2
-        // );
-
         ctx.fillStyle = "black";
-        ctx.font = "20px Arial";
+        ctx.font = this.size + "px Arial";
         for (let i = 0; i < this.descriptions.length; i++) {
             ctx.fillText(
                 this.descriptions[i].text,
@@ -67,7 +53,7 @@ class PickupHint extends Hint {
         }
         // add text
         ctx.fillStyle = "white";
-        ctx.font = "20px Arial";
+        ctx.font = this.size + "px Arial";
         for (let i = 0; i < this.descriptions.length; i++) {
             ctx.fillText(
                 this.descriptions[i].text,

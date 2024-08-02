@@ -28,6 +28,7 @@ const projectiles = [];
 const damageTexts = [];
 const droppedItems = [];
 let hoverHints = [];
+const worldObjects = [];
 function resize() {
     tileWidth = width / tilesPerRow;
     tileHeight = height / tilesPerColumn;

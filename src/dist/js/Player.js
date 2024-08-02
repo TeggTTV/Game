@@ -71,7 +71,29 @@ class Player {
     }
     colCheck(obj) {
         let collidedWith = false;
-        if (obj instanceof Tile) {
+        if (obj instanceof WorldObject) {
+            if (obj.options.solid) {
+                let dir = colCheck(this, obj, true);
+            }
+            else {
+                if (obj instanceof Tree) {
+                    let dir = colCheck(this, obj.hitbox, true);
+                }
+                else {
+                    let dir = colCheck(this, obj, false);
+                    if (dir && obj.options.hint) {
+                        collidedWith = true;
+                        if (obj.tile) {
+                            return {
+                                hint: new WorldObjectHint(obj.options.hint, obj.tile),
+                                original: obj,
+                            };
+                        }
+                    }
+                }
+            }
+        }
+        else if (obj instanceof Tile) {
             if (obj instanceof TileZone) {
                 if (obj instanceof TileZone) {
                     switch (obj.type) {
@@ -126,7 +148,13 @@ class Player {
                     collidedWith = true;
                     if (obj.itemData instanceof Gun) {
                         return {
-                            hint: new PickupHint(obj.itemData, obj, ["F to Pickup " + obj.itemData.gunLore.name], 20),
+                            hint: new PickupHint(obj.itemData, obj, [
+                                {
+                                    text: "F to Pickup " +
+                                        obj.itemData.gunLore.name,
+                                    centered: false,
+                                },
+                            ], 15),
                             original: obj,
                         };
                     }
@@ -134,9 +162,12 @@ class Player {
                         if (obj.itemData.items.length === 1)
                             return {
                                 hint: new PickupHint(obj.itemData, obj, [
-                                    "F to Pickup " +
-                                        obj.itemData.items[0].name,
-                                ], 20),
+                                    {
+                                        text: "F to Pickup " +
+                                            obj.itemData.items[0].name,
+                                        centered: false,
+                                    },
+                                ], 15),
                                 original: obj,
                             };
                     }
@@ -190,6 +221,15 @@ class Player {
         }
         if (keys["f"]) {
             if (this.activPickupHint.hint &&
+                this.activPickupHint.hint instanceof WorldObjectHint &&
+                this.activPickupHint.original instanceof WorldObject) {
+                if (this.activPickupHint.original.options.onInteract)
+                    this.activPickupHint.original.options.onInteract();
+                this.activPickupHint.original.delete();
+                this.activPickupHint = { hint: null, original: null };
+            }
+            if (this.activPickupHint.hint &&
+                this.activPickupHint.hint instanceof PickupHint &&
                 this.activPickupHint.original instanceof DroppedItem) {
                 if (this.activPickupHint.hint.item instanceof Gun) {
                     let item = this.activPickupHint.hint.item;

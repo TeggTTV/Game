@@ -5,12 +5,14 @@ class HoverHint extends Hint {
         this.descriptionArr = descriptionArr;
         this.descriptions = [];
         for (let i = 0; i < descriptionArr.length; i++) {
-            ctx.font = "20px Arial";
-            let w = ctx.measureText(descriptionArr[i]).width;
-            let h = ctx.measureText(descriptionArr[i]).actualBoundingBoxAscent +
-                ctx.measureText(descriptionArr[i]).actualBoundingBoxDescent;
+            ctx.font = this.size + "px Arial";
+            let w = ctx.measureText(descriptionArr[i].text).width;
+            let h = ctx.measureText(descriptionArr[i].text)
+                .actualBoundingBoxAscent +
+                ctx.measureText(descriptionArr[i].text)
+                    .actualBoundingBoxDescent;
             this.descriptions.push({
-                text: descriptionArr[i],
+                text: descriptionArr[i].text,
                 width: w,
                 height: h,
             });
@@ -46,7 +48,7 @@ class HoverHint extends Hint {
         ctx.fillStyle = "rgba(0, 0, 0, 0.5)";
         ctx.fillRect(camera.position.x + background.x, camera.position.y + background.y, background.width + margin * 2, background.height + margin * 2);
         ctx.fillStyle = "white";
-        ctx.font = "20px Arial";
+        ctx.font = this.size + "px Arial";
         for (let i = 0; i < this.descriptions.length; i++) {
             ctx.fillText(this.descriptions[i].text, camera.position.x + mouse.x + margin, camera.position.y +
                 mouse.y +

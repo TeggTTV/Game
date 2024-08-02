@@ -1,11 +1,16 @@
 "use strict";
 class Item {
-    constructor(owner, name, quantity, imgPath) {
+    constructor(owner, name, quantityRange, imgPath) {
         this.quantity = 1;
+        this.quantityRange = [1, 1];
         this.id = this.assignId();
         this.owner = owner;
         this.name = name;
-        this.quantity = quantity;
+        if (typeof quantityRange === "number")
+            this.quantity = quantityRange;
+        else if (quantityRange[0] && quantityRange[1])
+            this.quantity =
+                Math.floor(Math.random() * quantityRange[1]) + quantityRange[0];
         this.imgLoader = new ImageLoader();
         if (!imgPath)
             return;

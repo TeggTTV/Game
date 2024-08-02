@@ -1,6 +1,6 @@
 class Barrier extends Tile {
     immovable: boolean;
-    constructor(position: Vector, img: CanvasImageSource) {
+    constructor(position: Vector, img: HTMLImageElement) {
         super(position, img);
         this.position = position;
         this.img = img;

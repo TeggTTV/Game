@@ -29,11 +29,13 @@ window.onload = () => {
             (canvas.height * (e.clientY - canvas.getBoundingClientRect().top)) /
             canvas.height;
     });
-    canvas.addEventListener("mousedown", _ => {
-        mouse.down = 1;
+    canvas.addEventListener("mousedown", e => {
+        if(e.button === 0)
+            mouse.down = 1;
     });
-    canvas.addEventListener("mouseup", _ => {
-        mouse.down = 0;
+    canvas.addEventListener("mouseup", e => {
+        if(e.button === 0)
+            mouse.down = 0;
     });
 };
 // window.onresize = resize;

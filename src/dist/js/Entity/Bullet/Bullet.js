@@ -41,5 +41,14 @@ class Bullet {
             ctx.restore();
         });
     }
+    colCheck(pos) {
+        let dir = colCheck({
+            position: new Vector(this.position.x + this.img.width / 2, this.position.y + this.img.height / 2),
+            size: new Vector(this.img.width, this.img.height)
+        }, pos);
+        if (dir) {
+            this.delete();
+        }
+    }
 }
 //# sourceMappingURL=Bullet.js.map

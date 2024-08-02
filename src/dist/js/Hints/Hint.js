@@ -2,6 +2,7 @@
 class Hint {
     constructor(descriptionArr, size) {
         this.descriptionArr = descriptionArr;
+        this.descriptionArr = descriptionArr;
         this.descriptions = [];
         this.size = size;
     }

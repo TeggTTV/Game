@@ -56,6 +56,22 @@ function init() {
             imgPath: BaseAK47.imgPath,
             customs: new GunCustoms(1200, 100, 0.1, 10, 0, 2, 30, false, 10, 1, 5),
         }, GunLores["AK-47"]));
+        worldObjects.push(new WorldObject(new Vector(10 * tileWidth, 10 * tileHeight), new Vector(tileWidth, tileHeight), {
+            imgPath: "assets/images/blue.png",
+            solid: true,
+        }));
+        worldObjects.push(new WorldObject(new Vector(11 * tileWidth, 10 * tileHeight), new Vector(tileWidth, tileHeight), {
+            imgPath: "assets/images/blue.png",
+            solid: false,
+            hint: [
+                { text: "Harvest Leaves", centered: true },
+                { text: "F", centered: true },
+            ],
+            onInteract: () => {
+                player.inventory.add(new Item(player, "Leaves", [5, 10], "assets/images/asesprite/leaves.png"));
+            },
+        }));
+        worldObjects.push(new Tree(new Vector(5 * tileWidth, 5 * tileHeight), new Vector(tileWidth, tileHeight), { solid: false }));
         droppedItems.push(new DroppedItem(new Vector(10 * tileWidth, 7 * tileHeight), new Vector(-1, -1), {
             imgPath: "assets/images/guns/Beretta M9 2D.png",
             customs: {
@@ -95,13 +111,36 @@ function render() {
             player.activPickupHint = { hint: null, original: null };
         }
     });
+    worldObjects.forEach((worldObject) => {
+        worldObject.draw();
+        worldObject.update(deltaTime);
+        let playerColWorldObject = player.colCheck(worldObject);
+        if (playerColWorldObject) {
+            player.activPickupHint = playerColWorldObject;
+        }
+        else if (!playerColWorldObject &&
+            player.activPickupHint.original instanceof WorldObject &&
+            !player.colCheck(player.activPickupHint.original)) {
+            player.activPickupHint = { hint: null, original: null };
+        }
+        if (worldObject.tile)
+            player.colCheck(worldObject);
+    });
     entities.forEach((entity) => {
         entity.draw();
         entity.update(deltaTime);
+        for (let wo of worldObjects) {
+            if (wo.options.solid)
+                entity.colCheck(wo);
+        }
     });
     projectiles.forEach((projectile) => {
         projectile.draw();
         projectile.update(deltaTime);
+        for (let wo of worldObjects) {
+            if (wo.options.solid)
+                projectile.colCheck(wo);
+        }
     });
     damageTexts.forEach((damageText) => {
         damageText.draw();

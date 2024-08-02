@@ -8,12 +8,12 @@ class PickupHint extends Hint {
         this.entity = entity;
         this.descriptions = [];
         for (let i = 0; i < descriptionArr.length; i++) {
-            ctx.font = "20px Arial";
-            let w = ctx.measureText(descriptionArr[i]).width;
-            let h = ctx.measureText(descriptionArr[i]).actualBoundingBoxAscent +
-                ctx.measureText(descriptionArr[i]).actualBoundingBoxDescent;
+            ctx.font = this.size + "px Arial";
+            let w = ctx.measureText(descriptionArr[i].text).width;
+            let h = ctx.measureText(descriptionArr[i].text).actualBoundingBoxAscent +
+                ctx.measureText(descriptionArr[i].text).actualBoundingBoxDescent;
             this.descriptions.push({
-                text: descriptionArr[i],
+                text: descriptionArr[i].text,
                 width: w,
                 height: h,
             });
@@ -23,7 +23,7 @@ class PickupHint extends Hint {
         let first = this.descriptions[0];
         let h = first.height * this.descriptionArr.length;
         ctx.fillStyle = "black";
-        ctx.font = "20px Arial";
+        ctx.font = this.size + "px Arial";
         for (let i = 0; i < this.descriptions.length; i++) {
             ctx.fillText(this.descriptions[i].text, this.entity.position.x -
                 first.width / 2 +
@@ -36,7 +36,7 @@ class PickupHint extends Hint {
                 10);
         }
         ctx.fillStyle = "white";
-        ctx.font = "20px Arial";
+        ctx.font = this.size + "px Arial";
         for (let i = 0; i < this.descriptions.length; i++) {
             ctx.fillText(this.descriptions[i].text, this.entity.position.x -
                 first.width / 2 +

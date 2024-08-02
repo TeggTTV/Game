@@ -23,7 +23,7 @@ class Player {
 
     hovering: DroppedItem | null;
     activPickupHint: {
-        hint: PickupHint | null;
+        hint: PickupHint | WorldObjectHint | null;
         original: Entity | null;
     };
 
@@ -70,8 +70,8 @@ class Player {
     }
     equip(item: Item) {
         console.log(item);
-        
-        if (item instanceof Ammo) {            
+
+        if (item instanceof Ammo) {
             if (this.inventory.reserveAmmo[item.caliber] > 0) {
                 this.inventory.reserveAmmo[item.caliber] += item.quantity;
             } else {
@@ -128,9 +128,36 @@ class Player {
         // if (this.placingTile) {
         // }
     }
-    colCheck(obj: Entity | Tile): any {
+    colCheck(obj: Entity | Tile | WorldObject): any {
         let collidedWith = false;
-        if (obj instanceof Tile) {
+        if (obj instanceof WorldObject) {
+            
+            if (obj.options.solid) {
+                let dir = colCheck(this, obj, true);
+                // console.log(obj.tile);
+            } else {
+                if(obj instanceof Tree) {
+                    let dir = colCheck(this, obj.hitbox, true);
+                    
+                } else {
+                    let dir = colCheck(this, obj, false);
+    
+                    if (dir && obj.options.hint) {
+                        collidedWith = true;
+    
+                        if (obj.tile) {
+                            return {
+                                hint: new WorldObjectHint(
+                                    obj.options.hint,
+                                    obj.tile
+                                ),
+                                original: obj,
+                            };
+                        }
+                    }
+                }
+            }
+        } else if (obj instanceof Tile) {
             if (obj instanceof TileZone) {
                 // check type of tile
                 if (obj instanceof TileZone) {
@@ -192,8 +219,15 @@ class Player {
                             hint: new PickupHint(
                                 obj.itemData,
                                 obj,
-                                ["F to Pickup " + obj.itemData.gunLore.name],
-                                20
+                                [
+                                    {
+                                        text:
+                                            "F to Pickup " +
+                                            obj.itemData.gunLore.name,
+                                        centered: false,
+                                    },
+                                ],
+                                15
                             ),
                             original: obj,
                         };
@@ -204,10 +238,14 @@ class Player {
                                     obj.itemData,
                                     obj,
                                     [
-                                        "F to Pickup " +
-                                            obj.itemData.items[0].name,
+                                        {
+                                            text:
+                                                "F to Pickup " +
+                                                obj.itemData.items[0].name,
+                                            centered: false,
+                                        },
                                     ],
-                                    20
+                                    15
                                 ),
                                 original: obj,
                             };
@@ -268,8 +306,22 @@ class Player {
         }
 
         if (keys["f"]) {
+            if(
+                this.activPickupHint.hint &&
+                this.activPickupHint.hint instanceof WorldObjectHint &&
+                this.activPickupHint.original instanceof WorldObject
+            ) {
+                if (this.activPickupHint.original.options.onInteract)
+                    this.activPickupHint.original.options.onInteract();
+
+                this.activPickupHint.original.delete();
+                this.activPickupHint = { hint: null, original: null };
+
+            }
+
             if (
                 this.activPickupHint.hint &&
+                this.activPickupHint.hint instanceof PickupHint &&
                 this.activPickupHint.original instanceof DroppedItem
             ) {
                 if (this.activPickupHint.hint.item instanceof Gun) {

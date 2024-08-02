@@ -1,11 +1,16 @@
 "use strict";
 class ItemAddedToInventoryHint extends Hint {
     constructor(item) {
-        super([`${item.name}!`], 20);
+        super([
+            {
+                text: `${item.name}!`,
+                centered: false,
+            },
+        ], 15);
         this.item = item;
         this.descriptions.push({
-            text: this.descriptionArr[0],
-            width: ctx.measureText(this.descriptionArr[0]).width,
+            text: this.descriptionArr[0].text,
+            width: ctx.measureText(this.descriptionArr[0].text).width,
             height: this.size,
         });
     }
